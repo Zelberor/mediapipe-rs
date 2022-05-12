@@ -4,7 +4,7 @@ Rust and mediapipe.
 
 Mediapipe is a framework for building AI-powered computer vision and augmented reality applications. It provides high level libraries exposing some of its solutions for common problems. This package makes some of these solutions available in Rust. In order to use it we must build a C++ library that provides an interface to the mediapipe 'engine'.
 
-Figuring all this out has been a challenge. I have made these forks and instructions to help me in the future. There are a number of improvements I'd like to make when I have the time.
+Figuring all this out has been a challenge. I have made these forks and instructions to help me in the future.
 
 ## requirements
 
@@ -36,6 +36,14 @@ cp mediapipe/cpuhost.h /usr/local/include/mediagraph.h
 bazel build --define MEDIAPIPE_DISABLE_GPU=1 mediapipe:mediagraph
 cp bazel-bin/mediapipe/libmediagraph.so /usr/local/lib/libmediagraph.so
 cp mediapipe/cpuhost.h /usr/local/include/mediagraph.h
+```
+
+## usage
+
+Add the following to your dependencies list in `Cargo.toml`:
+
+```toml
+ux-mediapipe = "https://github.com/julesyoungberg/ux-mediapipe"
 ```
 
 ## binding generation
