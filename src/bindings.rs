@@ -3932,81 +3932,6 @@ fn bindgen_test_layout_Pose() {
     );
 }
 #[repr(C)]
-#[derive(Debug)]
-pub struct PoseGraph {
-    pub poller: *mut ::std::os::raw::c_void,
-    pub graph: *mut ::std::os::raw::c_void,
-}
-#[test]
-fn bindgen_test_layout_PoseGraph() {
-    assert_eq!(
-        ::std::mem::size_of::<PoseGraph>(),
-        16usize,
-        concat!("Size of: ", stringify!(PoseGraph))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<PoseGraph>(),
-        8usize,
-        concat!("Alignment of ", stringify!(PoseGraph))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<PoseGraph>())).poller as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(PoseGraph),
-            "::",
-            stringify!(poller)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<PoseGraph>())).graph as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(PoseGraph),
-            "::",
-            stringify!(graph)
-        )
-    );
-}
-extern "C" {
-    #[link_name = "\u{1}_ZN9PoseGraph7processEPKN2cv3MatER4Pose"]
-    pub fn PoseGraph_process(this: *mut PoseGraph, input: *const cv_Mat, output: *mut Pose)
-        -> bool;
-}
-extern "C" {
-    #[link_name = "\u{1}_ZN9PoseGraphC1EPKcS1_"]
-    pub fn PoseGraph_PoseGraph(
-        this: *mut PoseGraph,
-        graph_config: *const ::std::os::raw::c_char,
-        output_node: *const ::std::os::raw::c_char,
-    );
-}
-extern "C" {
-    #[link_name = "\u{1}_ZN9PoseGraphD1Ev"]
-    pub fn PoseGraph_PoseGraph_destructor(this: *mut PoseGraph);
-}
-impl PoseGraph {
-    #[inline]
-    pub unsafe fn process(&mut self, input: *const cv_Mat, output: *mut Pose) -> bool {
-        PoseGraph_process(self, input, output)
-    }
-    #[inline]
-    pub unsafe fn new(
-        graph_config: *const ::std::os::raw::c_char,
-        output_node: *const ::std::os::raw::c_char,
-    ) -> Self {
-        let mut __bindgen_tmp = ::std::mem::MaybeUninit::uninit();
-        PoseGraph_PoseGraph(__bindgen_tmp.as_mut_ptr(), graph_config, output_node);
-        __bindgen_tmp.assume_init()
-    }
-    #[inline]
-    pub unsafe fn destruct(&mut self) {
-        PoseGraph_PoseGraph_destructor(self)
-    }
-}
-#[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct Hand {
     pub data: [Landmark; 21usize],
@@ -4033,90 +3958,6 @@ fn bindgen_test_layout_Hand() {
             stringify!(data)
         )
     );
-}
-#[repr(C)]
-#[derive(Debug)]
-pub struct HandsGraph {
-    pub poller: *mut ::std::os::raw::c_void,
-    pub graph: *mut ::std::os::raw::c_void,
-}
-#[test]
-fn bindgen_test_layout_HandsGraph() {
-    assert_eq!(
-        ::std::mem::size_of::<HandsGraph>(),
-        16usize,
-        concat!("Size of: ", stringify!(HandsGraph))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<HandsGraph>(),
-        8usize,
-        concat!("Alignment of ", stringify!(HandsGraph))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<HandsGraph>())).poller as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(HandsGraph),
-            "::",
-            stringify!(poller)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<HandsGraph>())).graph as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(HandsGraph),
-            "::",
-            stringify!(graph)
-        )
-    );
-}
-extern "C" {
-    #[link_name = "\u{1}_ZN10HandsGraph7processEPKN2cv3MatER4HandS5_"]
-    pub fn HandsGraph_process(
-        this: *mut HandsGraph,
-        input: *const cv_Mat,
-        left: *mut Hand,
-        right: *mut Hand,
-    ) -> bool;
-}
-extern "C" {
-    #[link_name = "\u{1}_ZN10HandsGraphC1EPKcS1_"]
-    pub fn HandsGraph_HandsGraph(
-        this: *mut HandsGraph,
-        graph_config: *const ::std::os::raw::c_char,
-        output_node: *const ::std::os::raw::c_char,
-    );
-}
-extern "C" {
-    #[link_name = "\u{1}_ZN10HandsGraphD1Ev"]
-    pub fn HandsGraph_HandsGraph_destructor(this: *mut HandsGraph);
-}
-impl HandsGraph {
-    #[inline]
-    pub unsafe fn process(
-        &mut self,
-        input: *const cv_Mat,
-        left: *mut Hand,
-        right: *mut Hand,
-    ) -> bool {
-        HandsGraph_process(self, input, left, right)
-    }
-    #[inline]
-    pub unsafe fn new(
-        graph_config: *const ::std::os::raw::c_char,
-        output_node: *const ::std::os::raw::c_char,
-    ) -> Self {
-        let mut __bindgen_tmp = ::std::mem::MaybeUninit::uninit();
-        HandsGraph_HandsGraph(__bindgen_tmp.as_mut_ptr(), graph_config, output_node);
-        __bindgen_tmp.assume_init()
-    }
-    #[inline]
-    pub unsafe fn destruct(&mut self) {
-        HandsGraph_HandsGraph_destructor(self)
-    }
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -4148,45 +3989,141 @@ fn bindgen_test_layout_FaceMesh() {
 }
 #[repr(C)]
 #[derive(Debug)]
+pub struct PoseGraph {
+    pub _address: u8,
+}
+#[test]
+fn bindgen_test_layout_PoseGraph() {
+    assert_eq!(
+        ::std::mem::size_of::<PoseGraph>(),
+        1usize,
+        concat!("Size of: ", stringify!(PoseGraph))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<PoseGraph>(),
+        1usize,
+        concat!("Alignment of ", stringify!(PoseGraph))
+    );
+}
+extern "C" {
+    #[link_name = "\u{1}__ZN9PoseGraph7processEPKN2cv3MatER4Pose"]
+    pub fn PoseGraph_process(this: *mut PoseGraph, input: *const cv_Mat, output: *mut Pose)
+        -> bool;
+}
+extern "C" {
+    #[link_name = "\u{1}__ZN9PoseGraphC1EPKcS1_"]
+    pub fn PoseGraph_PoseGraph(
+        this: *mut PoseGraph,
+        graph_config: *const ::std::os::raw::c_char,
+        output_node: *const ::std::os::raw::c_char,
+    );
+}
+extern "C" {
+    #[link_name = "\u{1}__ZN9PoseGraphD1Ev"]
+    pub fn PoseGraph_PoseGraph_destructor(this: *mut PoseGraph);
+}
+impl PoseGraph {
+    #[inline]
+    pub unsafe fn process(&mut self, input: *const cv_Mat, output: *mut Pose) -> bool {
+        PoseGraph_process(self, input, output)
+    }
+    #[inline]
+    pub unsafe fn new(
+        graph_config: *const ::std::os::raw::c_char,
+        output_node: *const ::std::os::raw::c_char,
+    ) -> Self {
+        let mut __bindgen_tmp = ::std::mem::MaybeUninit::uninit();
+        PoseGraph_PoseGraph(__bindgen_tmp.as_mut_ptr(), graph_config, output_node);
+        __bindgen_tmp.assume_init()
+    }
+    #[inline]
+    pub unsafe fn destruct(&mut self) {
+        PoseGraph_PoseGraph_destructor(self)
+    }
+}
+#[repr(C)]
+#[derive(Debug)]
+pub struct HandsGraph {
+    pub _address: u8,
+}
+#[test]
+fn bindgen_test_layout_HandsGraph() {
+    assert_eq!(
+        ::std::mem::size_of::<HandsGraph>(),
+        1usize,
+        concat!("Size of: ", stringify!(HandsGraph))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<HandsGraph>(),
+        1usize,
+        concat!("Alignment of ", stringify!(HandsGraph))
+    );
+}
+extern "C" {
+    #[link_name = "\u{1}__ZN10HandsGraph7processEPKN2cv3MatER4HandS5_"]
+    pub fn HandsGraph_process(
+        this: *mut HandsGraph,
+        input: *const cv_Mat,
+        left: *mut Hand,
+        right: *mut Hand,
+    ) -> bool;
+}
+extern "C" {
+    #[link_name = "\u{1}__ZN10HandsGraphC1EPKcS1_"]
+    pub fn HandsGraph_HandsGraph(
+        this: *mut HandsGraph,
+        graph_config: *const ::std::os::raw::c_char,
+        output_node: *const ::std::os::raw::c_char,
+    );
+}
+extern "C" {
+    #[link_name = "\u{1}__ZN10HandsGraphD1Ev"]
+    pub fn HandsGraph_HandsGraph_destructor(this: *mut HandsGraph);
+}
+impl HandsGraph {
+    #[inline]
+    pub unsafe fn process(
+        &mut self,
+        input: *const cv_Mat,
+        left: *mut Hand,
+        right: *mut Hand,
+    ) -> bool {
+        HandsGraph_process(self, input, left, right)
+    }
+    #[inline]
+    pub unsafe fn new(
+        graph_config: *const ::std::os::raw::c_char,
+        output_node: *const ::std::os::raw::c_char,
+    ) -> Self {
+        let mut __bindgen_tmp = ::std::mem::MaybeUninit::uninit();
+        HandsGraph_HandsGraph(__bindgen_tmp.as_mut_ptr(), graph_config, output_node);
+        __bindgen_tmp.assume_init()
+    }
+    #[inline]
+    pub unsafe fn destruct(&mut self) {
+        HandsGraph_HandsGraph_destructor(self)
+    }
+}
+#[repr(C)]
+#[derive(Debug)]
 pub struct FaceMeshGraph {
-    pub poller: *mut ::std::os::raw::c_void,
-    pub graph: *mut ::std::os::raw::c_void,
+    pub _address: u8,
 }
 #[test]
 fn bindgen_test_layout_FaceMeshGraph() {
     assert_eq!(
         ::std::mem::size_of::<FaceMeshGraph>(),
-        16usize,
+        1usize,
         concat!("Size of: ", stringify!(FaceMeshGraph))
     );
     assert_eq!(
         ::std::mem::align_of::<FaceMeshGraph>(),
-        8usize,
+        1usize,
         concat!("Alignment of ", stringify!(FaceMeshGraph))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<FaceMeshGraph>())).poller as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(FaceMeshGraph),
-            "::",
-            stringify!(poller)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<FaceMeshGraph>())).graph as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(FaceMeshGraph),
-            "::",
-            stringify!(graph)
-        )
     );
 }
 extern "C" {
-    #[link_name = "\u{1}_ZN13FaceMeshGraph7processEPKN2cv3MatER8FaceMesh"]
+    #[link_name = "\u{1}__ZN13FaceMeshGraph7processEPKN2cv3MatER8FaceMesh"]
     pub fn FaceMeshGraph_process(
         this: *mut FaceMeshGraph,
         input: *const cv_Mat,
@@ -4194,7 +4131,7 @@ extern "C" {
     ) -> bool;
 }
 extern "C" {
-    #[link_name = "\u{1}_ZN13FaceMeshGraphC1EPKcS1_"]
+    #[link_name = "\u{1}__ZN13FaceMeshGraphC1EPKcS1_"]
     pub fn FaceMeshGraph_FaceMeshGraph(
         this: *mut FaceMeshGraph,
         graph_config: *const ::std::os::raw::c_char,
@@ -4202,7 +4139,7 @@ extern "C" {
     );
 }
 extern "C" {
-    #[link_name = "\u{1}_ZN13FaceMeshGraphD1Ev"]
+    #[link_name = "\u{1}__ZN13FaceMeshGraphD1Ev"]
     pub fn FaceMeshGraph_FaceMeshGraph_destructor(this: *mut FaceMeshGraph);
 }
 impl FaceMeshGraph {
