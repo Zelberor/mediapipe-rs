@@ -43,7 +43,7 @@ cp mediapipe/cpuhost.h /usr/local/include/mediagraph.h
 Add the following to your dependencies list in `Cargo.toml`:
 
 ```toml
-ux-mediapipe = "https://github.com/julesyoungberg/ux-mediapipe"
+ux-mediapipe = { git "https://github.com/julesyoungberg/ux-mediapipe" }
 ```
 
 ## binding generation
