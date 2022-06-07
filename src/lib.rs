@@ -19,6 +19,9 @@ mod bindings;
 
 pub use bindings::*;
 
+type Mediagraph = mediagraph_Mediagraph;
+type Landmark = mediagraph_Landmark;
+
 impl Default for Landmark {
     fn default() -> Self {
         Self {
@@ -31,6 +34,10 @@ impl Default for Landmark {
     }
 }
 
+struct Pose {
+    data: [Landmark; 33],
+}
+
 impl Default for Pose {
     fn default() -> Self {
         Self {
@@ -39,12 +46,20 @@ impl Default for Pose {
     }
 }
 
+struct Hand {
+    data: [Landmark; 21],
+}
+
 impl Default for Hand {
     fn default() -> Self {
         Self {
             data: [Landmark::default(); 21],
         }
     }
+}
+
+struct FaceMesh {
+    data: [Landmark; 478],
 }
 
 impl Default for FaceMesh {
@@ -99,7 +114,7 @@ pub mod pose {
         pub smooth: bool,       // true,
         pub detection_con: f32, // 0.5
         pub track_con: f32,     // 0.5
-        pub graph: PoseGraph,
+        pub graph: *mut Mediagraph,
     }
 
     impl PoseDetector {
@@ -108,8 +123,13 @@ pub mod pose {
                 CString::new(include_str!("pose_tracking_cpu.txt")).expect("CString::new failed");
             let output_node = CString::new("pose_landmarks").expect("CString::new failed");
 
-            let graph: PoseGraph =
-                unsafe { PoseGraph::new(graph_config.as_ptr(), output_node.as_ptr()) };
+            let graph: *mut Mediagraph = unsafe {
+                Mediagraph::Create(
+                    mediagraph_GraphType_POSE,
+                    graph_config.as_ptr(),
+                    output_node.as_ptr(),
+                )
+            };
 
             Self {
                 mode,
@@ -120,40 +140,20 @@ pub mod pose {
             }
         }
 
-        pub fn process(&mut self, input: &Mat, pose: *mut Pose) -> bool {
-            unsafe {
-                let frame = input.as_raw() as *const cv_Mat;
-                self.graph.process(frame, pose)
-            }
+        pub fn process(&mut self, input: &Mat) -> bool {
+            let mut data = input.clone();
+            let landmarks = unsafe {
+                mediagraph_Mediagraph_Process(
+                    self.graph as *mut std::ffi::c_void,
+                    data.data_mut(),
+                    data.cols(),
+                    data.rows(),
+                )
+            };
+
+            // @todo read each landmark to build a pose struct
+            true
         }
-
-        // // draw true
-        // pub fn find_pose(&self, img: &[u8], draw: bool) {}
-
-        // // draw: true, bbox_with_hands: false
-        // pub fn find_position(&self, img: &[u8], draw: bool, bbox_with_hands: bool) {}
-
-        // // draw: true
-        // pub fn find_angle(
-        //     &self,
-        //     img: &[u8],
-        //     p1: cgmath::Point2<f32>,
-        //     p2: cgmath::Point2<f32>,
-        //     draw: bool,
-        // ) {
-        // }
-
-        // pub fn find_distance(
-        //     &self,
-        //     p1: cgmath::Point2<f32>,
-        //     p2: cgmath::Point2<f32>,
-        //     img: Option<&[u8]>,
-        //     r: f32,
-        //     t: f32,
-        // ) {
-        // }
-
-        // pub fn anlge_check(&self, my_angle: f32, target_angle: f32, add_on: f32) {}
     }
 
     impl Default for PoseDetector {
@@ -171,7 +171,7 @@ pub mod face_mesh {
         pub max_faces: usize,       // 2
         pub min_detection_con: f32, // 0.5
         pub min_track_con: f32,     // 0.5
-        pub graph: FaceMeshGraph,
+        pub graph: *mut Mediagraph,
     }
 
     impl FaceMeshDetector {
@@ -185,8 +185,14 @@ pub mod face_mesh {
                 .expect("CString::new failed");
             let output_node = CString::new("multi_face_landmarks").expect("CString::new failed");
 
-            let graph: FaceMeshGraph =
-                unsafe { FaceMeshGraph::new(graph_config.as_ptr(), output_node.as_ptr()) };
+            let graph: *mut Mediagraph = unsafe {
+                Mediagraph::Create(
+                    mediagraph_GraphType_FACE,
+                    graph_config.as_ptr(),
+                    output_node.as_ptr(),
+                )
+            };
+
             Self {
                 static_mode,
                 max_faces,
@@ -196,22 +202,19 @@ pub mod face_mesh {
             }
         }
 
-        pub fn process(&mut self, input: &Mat, mesh: *mut FaceMesh) -> bool {
-            unsafe {
-                let frame = input.as_raw() as *const cv_Mat;
-                self.graph.process(frame, mesh)
-            }
+        pub fn process(&mut self, input: Mat) -> bool {
+            let mut data = input.clone();
+            let landmarks = unsafe {
+                mediagraph_Mediagraph_Process(
+                    self.graph as *mut std::ffi::c_void,
+                    data.data_mut(),
+                    data.cols(),
+                    data.rows(),
+                )
+            };
+            // @todo read each landmark to build a face mesh struct
+            true
         }
-        // // draw: true
-        // pub fn find_face_mesh(&self, img: &[u8], draw: bool) {}
-
-        // pub fn find_distance(
-        //     &self,
-        //     p1: cgmath::Point2<f32>,
-        //     p2: cgmath::Point2<f32>,
-        //     img: Option<&[u8]>,
-        // ) {
-        // }
     }
 
     impl Default for FaceMeshDetector {
@@ -221,49 +224,8 @@ pub mod face_mesh {
     }
 }
 
-// pub mod face_detection {
-//     pub enum FaceKeyPoint {
-//         RIGHT_EYE = 0,
-//         LEFT_EYE = 1,
-//         NOSE_TIP = 2,
-//         MOUTH_CENTER = 3,
-//         RIGHT_EAR_TRAGION = 4,
-//         LEFT_EAR_TRAGION = 5,
-//     }
-//     pub struct FaceDetection {}
-
-//     impl FaceDetection {
-//         pub fn process(&self /* image */) /*NamedTuple*/ {}
-//     }
-
-//     pub struct FaceDetector {
-//         pub min_detection_con: f32, // 0.5
-//         pub face_detection: FaceDetection,
-//     }
-
-//     impl FaceDetector {
-//         pub fn new(min_detection_con: f32) -> Self {
-//             Self {
-//                 min_detection_con,
-//                 face_detection: todo!(),
-//             }
-//         }
-
-//         // draw: true
-//         pub fn find_faces(&self, img: &[u8], draw: bool) {}
-//     }
-
-//     impl Default for FaceDetector {
-//         fn default() -> Self {
-//             Self::new(0.5)
-//         }
-//     }
-// }
-
 pub mod hands {
     use super::*;
-    // use mediapipe::*;
-    // use std::collections::HashMap;
 
     pub enum HandLandmark {
         WRIST = 0,
@@ -294,21 +256,22 @@ pub mod hands {
         pub max_hands: usize,
         pub detection_con: f32, // 0.5
         pub min_track_con: f32, // 0.5
-        pub graph: HandsGraph,
+        pub graph: *mut Mediagraph,
     }
 
     impl HandDetector {
         pub fn new(mode: bool, max_hands: usize, detection_con: f32, min_track_con: f32) -> Self {
-            // // ::std::vector<::mediapipe::NormalizedLandmarkList>
-            // let graph_config = CString::new(include_str!("face_mesh_desktop_live.txt")).expect("CString::new failed");
-            // let output_node = CString::new("multi_face_landmarks").expect("CString::new failed");
-
             let graph_config = CString::new(include_str!("hand_tracking_desktop_live.txt"))
                 .expect("CString::new failed");
             let output_node = CString::new("hand_landmarks").expect("CString::new failed");
 
-            let graph: HandsGraph =
-                unsafe { HandsGraph::new(graph_config.as_ptr(), output_node.as_ptr()) };
+            let graph: *mut Mediagraph = unsafe {
+                Mediagraph::Create(
+                    mediagraph_GraphType_FACE,
+                    graph_config.as_ptr(),
+                    output_node.as_ptr(),
+                )
+            };
 
             Self {
                 mode,
@@ -319,76 +282,24 @@ pub mod hands {
             }
         }
 
-        pub fn process(&mut self, input: &Mat, left: *mut Hand, right: *mut Hand) -> bool {
-            unsafe {
-                let frame = input.as_raw() as *const cv_Mat;
-                self.graph.process(frame, left, right)
-            }
+        pub fn process(&mut self, input: Mat) -> bool {
+            let mut data = input.clone();
+            let landmarks = unsafe {
+                mediagraph_Mediagraph_Process(
+                    self.graph as *mut std::ffi::c_void,
+                    data.data_mut(),
+                    data.cols(),
+                    data.rows(),
+                )
+            };
+            // @todo read each landmark to build a hands struct
+            true
         }
-        // // draw: true, flip_type: tru
-        // pub fn find_hands(&self, img: &[u8], draw: bool, flip_type: bool) {}
-
-        // pub fn fingers_up(&self, my_hand: &HashMap<String, String>) /*List of which fingers are up*/
-        // {
-        // }
-
-        // pub fn find_distance(
-        //     &self,
-        //     p1: cgmath::Point2<f32>,
-        //     p2: cgmath::Point2<f32>,
-        //     img: Option<&[u8]>,
-        // ) {
-        // }
     }
 
     impl Default for HandDetector {
         fn default() -> Self {
             Self::new(false, 2, 0.5, 0.5)
         }
-    }
-}
-
-// pub mod objectron {
-//     pub struct Objectron {}
-
-//     impl Objectron {
-//         pub fn process(&self /* image */) /*NamedTuple*/ {}
-//     }
-// }
-
-// pub mod selfie_segmentation {
-//     pub struct SelfieSegmentation {}
-
-//     impl SelfieSegmentation {
-//         pub fn process(&self /* image */) /*NamedTuple*/ {}
-//     }
-
-//     pub struct SelfieSegmentationDetector {
-//         pub model: usize, // 0 is general 1 is landscape(faster)
-//         pub selfie_segmentation: SelfieSegmentation,
-//     }
-
-//     impl SelfieSegmentationDetector {
-//         pub fn new(model: usize) -> Self {
-//             todo!()
-//         }
-
-//         // threshold: 0.1
-//         pub fn remove_bg(&self, img: &[u8], img_bg: [u8; 3], threshold: f32) {}
-//     }
-
-//     impl Default for SelfieSegmentationDetector {
-//         fn default() -> Self {
-//             Self::new(1)
-//         }
-//     }
-// }
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
     }
 }

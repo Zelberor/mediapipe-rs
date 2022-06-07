@@ -27,7 +27,7 @@ Build & install the mediagraph library.
 ```shell
 bazel build --define MEDIAPIPE_DISABLE_GPU=1 mediapipe:libmediagraph.dylib
 sudo cp bazel-bin/mediapipe/libmediagraph.dylib /usr/local/lib/libmediagraph.dylib
-cp mediapipe/cpuhost.h /usr/local/include/mediagraph.h
+cp mediapipe/mediagraph.h /usr/local/include/mediagraph.h
 ```
 
 ### linux (untested)
@@ -35,7 +35,7 @@ cp mediapipe/cpuhost.h /usr/local/include/mediagraph.h
 ```shell
 bazel build --define MEDIAPIPE_DISABLE_GPU=1 mediapipe:mediagraph
 cp bazel-bin/mediapipe/libmediagraph.so /usr/local/lib/libmediagraph.so
-cp mediapipe/cpuhost.h /usr/local/include/mediagraph.h
+cp mediapipe/mediagraph.h /usr/local/include/mediagraph.h
 ```
 
 ## usage

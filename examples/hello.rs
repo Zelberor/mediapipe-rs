@@ -1,8 +1,6 @@
 #![allow(unused_variables)]
 #![allow(dead_code)]
 
-use mediapipe::*;
-
 mod examples {
     use super::*;
     use opencv::prelude::*;
@@ -35,33 +33,6 @@ mod examples {
         Ok(())
     }
 
-    // pub fn face_detection() -> Result<()> {
-    //     let window = "video capture";
-
-    //     highgui::named_window(window, highgui::WINDOW_AUTOSIZE)?;
-
-    //     let mut cap = videoio::VideoCapture::new(0, videoio::CAP_ANY)?;
-    //     if !cap.is_opened()? {
-    //         panic!("Unable to open default cam")
-    //     }
-
-    //     let detector = mediapipe::face_detection::FaceDetector::default();
-
-    //     loop {
-    //         let mut frame = Mat::default();
-    //         cap.read(&mut frame)?;
-    //         let size = frame.size()?;
-    //         if size.width > 0 {
-    //             highgui::imshow(window, &mut frame)?
-    //         }
-    //         let key = highgui::wait_key(10)?;
-    //         if key > 0 && key != 255 {
-    //             break;
-    //         }
-    //     }
-    //     Ok(())
-    // }
-
     pub fn face_mesh() -> Result<()> {
         let window = "video capture";
 
@@ -90,6 +61,7 @@ mod examples {
                 imgproc::cvt_color(&raw_frame, &mut rgb_frame, imgproc::COLOR_BGR2RGB, 0)?;
                 opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
+                println!("processing");
                 detector.process(&flip_frame, &mut mesh);
 
                 highgui::imshow(window, &mut flip_frame)?;
@@ -137,7 +109,7 @@ mod examples {
             if size.width > 0 && !raw_frame.empty() {
                 imgproc::cvt_color(&raw_frame, &mut rgb_frame, imgproc::COLOR_BGR2RGB, 0)?;
                 opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
-                
+
                 detector.process(&flip_frame, &mut left, &mut right);
 
                 highgui::imshow(window, &mut flip_frame)?;
