@@ -47,7 +47,6 @@ mod examples {
         cap.set(videoio::CAP_PROP_FRAME_HEIGHT, 480.0)?;
         cap.set(videoio::CAP_PROP_FPS, 30.0)?;
 
-        let mut mesh = FaceMesh::default();
         let mut detector = face_mesh::FaceMeshDetector::default();
 
         let mut raw_frame = Mat::default();
@@ -62,13 +61,10 @@ mod examples {
                 opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
                 println!("processing");
-                detector.process(&flip_frame, &mut mesh);
+                let data = detector.process(&flip_frame);
 
                 highgui::imshow(window, &mut flip_frame)?;
-                println!(
-                    "LANDMARK: {} {} {}",
-                    mesh.data[0].x, mesh.data[0].y, mesh.data[0].z
-                );
+                println!("LANDMARK: {} {} {}", data[0].x, data[0].y, data[0].z);
             } else {
                 println!("WARN: Skip empty frame");
             }
@@ -95,8 +91,6 @@ mod examples {
         cap.set(videoio::CAP_PROP_FRAME_HEIGHT, 480.0)?;
         cap.set(videoio::CAP_PROP_FPS, 30.0)?;
 
-        let mut left = Hand::default();
-        let mut right = Hand::default();
         let mut detector = hands::HandDetector::default();
 
         let mut raw_frame = Mat::default();
@@ -110,13 +104,10 @@ mod examples {
                 imgproc::cvt_color(&raw_frame, &mut rgb_frame, imgproc::COLOR_BGR2RGB, 0)?;
                 opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
-                detector.process(&flip_frame, &mut left, &mut right);
+                let data = detector.process(&flip_frame);
 
                 highgui::imshow(window, &mut flip_frame)?;
-                println!(
-                    "LANDMARK: {} {} {}",
-                    left.data[0].x, left.data[0].y, left.data[0].z
-                );
+                println!("LANDMARK: {} {} {}", data[0].x, data[0].y, data[0].z);
             } else {
                 println!("WARN: Skip empty frame");
             }
@@ -143,7 +134,6 @@ mod examples {
         cap.set(videoio::CAP_PROP_FRAME_HEIGHT, 480.0)?;
         cap.set(videoio::CAP_PROP_FPS, 30.0)?;
 
-        let mut pose = Pose::default();
         let mut detector = pose::PoseDetector::default();
 
         let mut raw_frame = Mat::default();
@@ -157,13 +147,10 @@ mod examples {
                 imgproc::cvt_color(&raw_frame, &mut rgb_frame, imgproc::COLOR_BGR2RGB, 0)?;
                 opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
-                detector.process(&rgb_frame, &mut pose);
+                let data = detector.process(&rgb_frame);
 
                 highgui::imshow(window, &mut rgb_frame)?;
-                println!(
-                    "LANDMARK: {} {} {}",
-                    pose.data[0].x, pose.data[0].y, pose.data[0].z
-                );
+                println!("LANDMARK: {} {} {}", data[0].x, data[0].y, data[0].z);
             } else {
                 println!("WARN: Skip empty frame");
             }
