@@ -62,11 +62,14 @@ mod examples {
                 imgproc::cvt_color(&raw_frame, &mut rgb_frame, imgproc::COLOR_BGR2RGB, 0)?;
                 opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
-                println!("processing");
                 let data = detector.process(&flip_frame);
+                println!("received {} landmarks", data.len());
 
                 highgui::imshow(window, &mut flip_frame)?;
-                println!("LANDMARK: {} {} {}", data[0].x, data[0].y, data[0].z);
+
+                if data.len() > 0 {
+                    println!("LANDMARK: {} {} {}", data[0].x, data[0].y, data[0].z);
+                }
             } else {
                 println!("WARN: Skip empty frame");
             }
@@ -107,9 +110,13 @@ mod examples {
                 opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
                 let data = detector.process(&flip_frame);
+                println!("received {} landmarks", data.len());
 
                 highgui::imshow(window, &mut flip_frame)?;
-                println!("LANDMARK: {} {} {}", data[0].x, data[0].y, data[0].z);
+
+                if data.len() > 0 {
+                    println!("LANDMARK: {} {} {}", data[0].x, data[0].y, data[0].z);
+                }
             } else {
                 println!("WARN: Skip empty frame");
             }
@@ -150,9 +157,13 @@ mod examples {
                 opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
                 let data = detector.process(&rgb_frame);
+                println!("received {} landmarks", data.len());
 
                 highgui::imshow(window, &mut rgb_frame)?;
-                println!("LANDMARK: {} {} {}", data[0].x, data[0].y, data[0].z);
+
+                if data.len() > 0 {
+                    println!("LANDMARK: {} {} {}", data[0].x, data[0].y, data[0].z);
+                }
             } else {
                 println!("WARN: Skip empty frame");
             }
@@ -168,6 +179,6 @@ mod examples {
 
 fn main() {
     // examples::pose_estimation().unwrap()
-    // examples::hand_tracking().unwrap()
-    examples::face_mesh().unwrap()
+    examples::hand_tracking().unwrap()
+    // examples::face_mesh().unwrap()
 }

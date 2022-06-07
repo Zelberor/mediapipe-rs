@@ -107,6 +107,9 @@ impl Mediagraph {
                 data.rows(),
             )
         };
+        if raw_landmarks.is_null() {
+            return &[];
+        }
         let landmarks =
             unsafe { std::slice::from_raw_parts(raw_landmarks, self.num_landmarks as usize) };
         landmarks
