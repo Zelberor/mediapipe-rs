@@ -82,18 +82,31 @@ pub struct mediagraph_Mediagraph__bindgen_vtable(::std::os::raw::c_void);
 #[derive(Debug)]
 pub struct mediagraph_Mediagraph {
     pub vtable_: *const mediagraph_Mediagraph__bindgen_vtable,
+    pub m_graph_type: mediagraph_GraphType,
 }
 #[test]
 fn bindgen_test_layout_mediagraph_Mediagraph() {
     assert_eq!(
         ::std::mem::size_of::<mediagraph_Mediagraph>(),
-        8usize,
+        16usize,
         concat!("Size of: ", stringify!(mediagraph_Mediagraph))
     );
     assert_eq!(
         ::std::mem::align_of::<mediagraph_Mediagraph>(),
         8usize,
         concat!("Alignment of ", stringify!(mediagraph_Mediagraph))
+    );
+    assert_eq!(
+        unsafe {
+            &(*(::std::ptr::null::<mediagraph_Mediagraph>())).m_graph_type as *const _ as usize
+        },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(mediagraph_Mediagraph),
+            "::",
+            stringify!(m_graph_type)
+        )
     );
 }
 extern "C" {
