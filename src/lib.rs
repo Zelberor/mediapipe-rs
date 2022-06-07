@@ -72,6 +72,7 @@ impl Default for FaceMesh {
 
 struct Mediagraph {
     graph: *mut mediagraph_Mediagraph,
+    num_landmarks: u32,
 }
 
 impl Mediagraph {
@@ -83,12 +84,22 @@ impl Mediagraph {
             mediagraph_Mediagraph::Create(graph_type, graph_config.as_ptr(), output_node.as_ptr())
         };
 
-        Self { graph }
+        let num_landmarks = match graph_type {
+            mediagraph_GraphType_POSE => 33,
+            mediagraph_GraphType_HANDS => 42,
+            mediagraph_GraphType_FACE => 478,
+            _ => 0,
+        };
+
+        Self {
+            graph,
+            num_landmarks,
+        }
     }
 
-    fn process(&mut self, input: &Mat) {
+    pub fn process(&mut self, input: &Mat) -> &[Landmark] {
         let mut data = input.clone();
-        let landmarks = unsafe {
+        let raw_landmarks = unsafe {
             mediagraph_Mediagraph_Process(
                 self.graph as *mut std::ffi::c_void,
                 data.data_mut(),
@@ -96,6 +107,9 @@ impl Mediagraph {
                 data.rows(),
             )
         };
+        let landmarks =
+            unsafe { std::slice::from_raw_parts(raw_landmarks, self.num_landmarks as usize) };
+        landmarks
     }
 }
 
@@ -163,10 +177,9 @@ pub mod pose {
             }
         }
 
-        pub fn process(&mut self, input: &Mat) -> bool {
-            self.graph.process(input);
-            // @todo read each landmark to build a pose struct
-            true
+        pub fn process(&mut self, input: &Mat) -> &[Landmark] {
+            let landmarks = self.graph.process(input);
+            landmarks
         }
     }
 
@@ -210,10 +223,9 @@ pub mod face_mesh {
             }
         }
 
-        pub fn process(&mut self, input: &Mat) -> bool {
-            self.graph.process(input);
-            // @todo read each landmark to build a face mesh struct
-            true
+        pub fn process(&mut self, input: &Mat) -> &[Landmark] {
+            let landmarks = self.graph.process(input);
+            landmarks
         }
     }
 
@@ -276,10 +288,9 @@ pub mod hands {
             }
         }
 
-        pub fn process(&mut self, input: &Mat) -> bool {
-            self.graph.process(input);
-            // @todo read each landmark to build a hands struct
-            true
+        pub fn process(&mut self, input: &Mat) -> &[Landmark] {
+            let landmarks = self.graph.process(input);
+            landmarks
         }
     }
 
