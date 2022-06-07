@@ -1,6 +1,8 @@
 #![allow(unused_variables)]
 #![allow(dead_code)]
 
+use mediapipe::*;
+
 mod examples {
     use super::*;
     use opencv::prelude::*;
