@@ -2,14 +2,11 @@
 
 Rust and mediapipe.
 
-Mediapipe is a framework for building AI-powered computer vision and augmented reality applications. It provides high level libraries exposing some of its solutions for common problems. This package makes some of these solutions available in Rust. In order to use it we must build a C++ library that provides an interface to the mediapipe 'engine'.
-
-Figuring all this out has been a challenge. I have made these forks and instructions to help me in the future.
+Mediapipe is a framework for building AI-powered computer vision and augmented reality applications. It provides high level libraries exposing some of its solutions for common problems. This package makes some of these solutions available in Rust. In order to use it we must build a custom mediapipe C++ library.
 
 ## requirements
 
-- bazel
-- clang
+- [bazel](https://bazel.build/install)
 
 ## setup
 
