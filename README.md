@@ -38,6 +38,14 @@ cp bazel-bin/mediapipe/libmediagraph.so /usr/local/lib/libmediagraph.so
 cp mediapipe/mediagraph.h /usr/local/include/mediagraph.h
 ```
 
+## examples
+
+Examples are located in the `./examples` directory. Run them with
+
+```shell
+cargo run --release --example hello
+```
+
 ## usage
 
 Add the following to your dependencies list in `Cargo.toml`:
@@ -45,7 +53,3 @@ Add the following to your dependencies list in `Cargo.toml`:
 ```toml
 ux-mediapipe = { git = "https://github.com/julesyoungberg/ux-mediapipe" }
 ```
-
-## binding generation
-
-The binding generation should be automated. Currently it is a combination of manual commands and manual file editing...not ideal.
