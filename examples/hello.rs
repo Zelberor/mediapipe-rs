@@ -62,6 +62,7 @@ mod examples {
                 imgproc::cvt_color(&raw_frame, &mut rgb_frame, imgproc::COLOR_BGR2RGB, 0)?;
                 opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
+                println!("processing");
                 let data = detector.process(&flip_frame);
                 println!("received {} landmarks", data.len());
 
@@ -109,6 +110,7 @@ mod examples {
                 imgproc::cvt_color(&raw_frame, &mut rgb_frame, imgproc::COLOR_BGR2RGB, 0)?;
                 opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
+                println!("processing");
                 let data = detector.process(&flip_frame);
                 println!("received {} landmarks", data.len());
 
@@ -156,6 +158,7 @@ mod examples {
                 imgproc::cvt_color(&raw_frame, &mut rgb_frame, imgproc::COLOR_BGR2RGB, 0)?;
                 opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
+                println!("processing");
                 let data = detector.process(&rgb_frame);
                 println!("received {} landmarks", data.len());
 
@@ -179,6 +182,6 @@ mod examples {
 
 fn main() {
     // examples::pose_estimation().unwrap()
-    examples::hand_tracking().unwrap()
-    // examples::face_mesh().unwrap()
+    // examples::hand_tracking().unwrap()
+    examples::face_mesh().unwrap()
 }
