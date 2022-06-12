@@ -50,3 +50,14 @@ Add the following to your dependencies list in `Cargo.toml`:
 ```toml
 ux-mediapipe = { git = "https://github.com/julesyoungberg/ux-mediapipe" }
 ```
+
+Mediapipe relies on tflite files which must be available at `./mediapipe/modules/`. The easiest way to do this is
+
+```shell
+mkdir mediapipe
+cp -R ../mediapipe/mediapipe/modules ./mediapipe/modules
+```
+
+The path to mediapipe may be different depending on where you've cloned it.
+
+Also this copies all of mediapipe's tflite files rather than only the few needed.
