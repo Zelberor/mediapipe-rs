@@ -20,7 +20,7 @@ mod bindings;
 pub use bindings::*;
 
 type GraphType = mediagraph_GraphType;
-type Landmark = mediagraph_Landmark;
+pub type Landmark = mediagraph_Landmark;
 
 impl Default for Landmark {
     fn default() -> Self {
@@ -34,8 +34,8 @@ impl Default for Landmark {
     }
 }
 
-struct Pose {
-    data: [Landmark; 33],
+pub struct Pose {
+    pub data: [Landmark; 33],
 }
 
 impl Default for Pose {
@@ -46,8 +46,8 @@ impl Default for Pose {
     }
 }
 
-struct Hand {
-    data: [Landmark; 21],
+pub struct Hand {
+    pub data: [Landmark; 21],
 }
 
 impl Default for Hand {
@@ -58,8 +58,8 @@ impl Default for Hand {
     }
 }
 
-struct FaceMesh {
-    data: [Landmark; 478],
+pub struct FaceMesh {
+    pub data: [Landmark; 478],
 }
 
 impl Default for FaceMesh {
@@ -180,9 +180,16 @@ pub mod pose {
             }
         }
 
-        pub fn process(&mut self, input: &Mat) -> &[Landmark] {
+        pub fn process(&mut self, input: &Mat) -> Option<Pose> {
             let landmarks = self.graph.process(input);
-            landmarks
+
+            if landmarks.is_empty() {
+                return None;
+            }
+
+            let mut pose = Pose::default();
+            pose.data.copy_from_slice(&landmarks[..]);
+            Some(pose)
         }
     }
 
@@ -226,9 +233,16 @@ pub mod face_mesh {
             }
         }
 
-        pub fn process(&mut self, input: &Mat) -> &[Landmark] {
+        pub fn process(&mut self, input: &Mat) -> Option<FaceMesh> {
             let landmarks = self.graph.process(input);
-            landmarks
+
+            if landmarks.is_empty() {
+                return None;
+            }
+
+            let mut face_mesh = FaceMesh::default();
+            face_mesh.data.copy_from_slice(&landmarks[..]);
+            Some(face_mesh)
         }
     }
 
@@ -291,9 +305,19 @@ pub mod hands {
             }
         }
 
-        pub fn process(&mut self, input: &Mat) -> &[Landmark] {
+        pub fn process(&mut self, input: &Mat) -> Option<[Hand; 2]> {
             let landmarks = self.graph.process(input);
-            landmarks
+
+            if landmarks.is_empty() {
+                return None;
+            }
+
+            let mut lh = Hand::default();
+            let mut rh = Hand::default();
+            lh.data.copy_from_slice(&landmarks[0..21]);
+            rh.data.copy_from_slice(&landmarks[21..42]);
+
+            Some([lh, rh])
         }
     }
 

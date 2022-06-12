@@ -63,13 +63,12 @@ mod examples {
                 opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
                 println!("processing");
-                let data = detector.process(&flip_frame);
-                println!("received {} landmarks", data.len());
+                let result = detector.process(&flip_frame);
 
                 highgui::imshow(window, &mut flip_frame)?;
 
-                if data.len() > 0 {
-                    println!("LANDMARK: {} {} {}", data[0].x, data[0].y, data[0].z);
+                if let Some(fm) = result {
+                    println!("LANDMARK: {} {} {}", fm.data[0].x, fm.data[0].y, fm.data[0].z);
                 }
             } else {
                 println!("WARN: Skip empty frame");
@@ -111,13 +110,12 @@ mod examples {
                 opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
                 println!("processing");
-                let data = detector.process(&flip_frame);
-                println!("received {} landmarks", data.len());
+                let result = detector.process(&flip_frame);
 
                 highgui::imshow(window, &mut flip_frame)?;
 
-                if data.len() > 0 {
-                    println!("LANDMARK: {} {} {}", data[0].x, data[0].y, data[0].z);
+                if let Some(hands) = result {
+                    println!("LANDMARK: {} {} {}", hands[0].data[0].x, hands[0].data[0].y, hands[0].data[0].z);
                 }
             } else {
                 println!("WARN: Skip empty frame");
@@ -159,13 +157,12 @@ mod examples {
                 opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
                 println!("processing");
-                let data = detector.process(&rgb_frame);
-                println!("received {} landmarks", data.len());
+                let result = detector.process(&rgb_frame);
 
                 highgui::imshow(window, &mut rgb_frame)?;
 
-                if data.len() > 0 {
-                    println!("LANDMARK: {} {} {}", data[0].x, data[0].y, data[0].z);
+                if let Some(pose) = result {
+                    println!("LANDMARK: {} {} {}", pose.data[0].x, pose.data[0].y, pose.data[0].z);
                 }
             } else {
                 println!("WARN: Skip empty frame");
