@@ -1,4 +1,4 @@
-# ux-mediapipe
+# mediapipe-rs
 
 Rust and mediapipe.
 
@@ -48,7 +48,7 @@ cargo run --release --example hello
 Add the following to your dependencies list in `Cargo.toml`:
 
 ```toml
-ux-mediapipe = { git = "https://github.com/julesyoungberg/ux-mediapipe" }
+mediapipe = { git = "https://github.com/julesyoungberg/mediapipe-rs" }
 ```
 
 Mediapipe relies on tflite files which must be available at `./mediapipe/modules/`. The easiest way to do this is

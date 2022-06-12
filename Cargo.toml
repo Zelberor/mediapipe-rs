@@ -1,7 +1,7 @@
 [package]
-name = "ux-mediapipe"
+name = "mediapipe"
 version = "0.1.0"
-documentation = "https://docs.rs/ux-mediapipe"
+# documentation = "https://docs.rs/ux-mediapipe"
 description = "Rusty bindings for Google mediapipe"
 license = "MPL-2.0"
 edition = "2018"
