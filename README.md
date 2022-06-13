@@ -59,5 +59,3 @@ cp -R ../mediapipe/mediapipe/modules ./mediapipe/modules
 ```
 
 The path to mediapipe may be different depending on where you've cloned it.
-
-Also this copies all of mediapipe's tflite files rather than only the few needed.
