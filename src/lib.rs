@@ -123,6 +123,14 @@ impl Mediagraph {
     }
 }
 
+impl Drop for Mediagraph {
+    fn drop(&mut self) {
+        unsafe {
+            mediagraph_Mediagraph_Mediagraph_destructor(self.graph);
+        }
+    }
+}
+
 pub mod pose {
     //! Pose detection utilities.
     use super::*;
