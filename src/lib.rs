@@ -18,8 +18,15 @@ mod bindings;
 
 use bindings::*;
 
-type GraphType = mediagraph_GraphType;
+/// The C++ mediagraph graph type.
+pub type GraphType = mediagraph_GraphType;
+
+/// The C++ mediagraph landmark type.
 pub type Landmark = mediagraph_Landmark;
+
+pub const FACE_GRAPH_TYPE: GraphType = mediagraph_GraphType_FACE;
+pub const HANDS_GRAPH_TYPE: GraphType = mediagraph_GraphType_HANDS;
+pub const POSE_GRAPH_TYPE: GraphType = mediagraph_GraphType_POSE;
 
 impl Default for Landmark {
     fn default() -> Self {
@@ -74,13 +81,15 @@ impl Default for FaceMesh {
     }
 }
 
+/// Graph calculator which interacts with the C++ library.
 pub struct Mediagraph {
     graph: *mut mediagraph_Mediagraph,
     num_landmarks: u32,
 }
 
 impl Mediagraph {
-    fn new(graph_type: GraphType, graph_config: &str, output_node: &str) -> Self {
+    /// Creates a new Mediagraph with the given config.
+    pub fn new(graph_type: GraphType, graph_config: &str, output_node: &str) -> Self {
         let graph_config = CString::new(graph_config).expect("CString::new failed");
         let output_node = CString::new(output_node).expect("CString::new failed");
 
@@ -89,9 +98,9 @@ impl Mediagraph {
         };
 
         let num_landmarks = match graph_type {
-            mediagraph_GraphType_POSE => 33,
-            mediagraph_GraphType_HANDS => 42,
-            mediagraph_GraphType_FACE => 478,
+            FACE_GRAPH_TYPE => 478,
+            HANDS_GRAPH_TYPE => 42,
+            POSE_GRAPH_TYPE => 33,
             _ => 0,
         };
 
@@ -101,6 +110,7 @@ impl Mediagraph {
         }
     }
 
+    /// Processes the input frame, returns a slice of landmarks if any are detected.
     pub fn process(&mut self, input: &Mat) -> &[Landmark] {
         let mut data = input.clone();
         let raw_landmarks = unsafe {
@@ -172,7 +182,7 @@ pub mod pose {
     impl PoseDetector {
         pub fn new(mode: bool, smooth: bool, detection_con: f32, track_con: f32) -> Self {
             let graph = Mediagraph::new(
-                mediagraph_GraphType_POSE,
+                POSE_GRAPH_TYPE,
                 include_str!("pose_tracking_cpu.txt"),
                 "pose_landmarks",
             );
@@ -208,7 +218,7 @@ pub mod pose {
 }
 
 pub mod face_mesh {
-    //! Face mesh utilities.
+    //! Face detection utilities.
     use super::*;
 
     pub struct FaceMeshDetector {
@@ -227,7 +237,7 @@ pub mod face_mesh {
             min_track_con: f32,
         ) -> Self {
             let graph = Mediagraph::new(
-                mediagraph_GraphType_FACE,
+                FACE_GRAPH_TYPE,
                 include_str!("face_mesh_desktop_live.txt"),
                 "multi_face_landmarks",
             );
@@ -302,7 +312,7 @@ pub mod hands {
     impl HandDetector {
         pub fn new(mode: bool, max_hands: usize, detection_con: f32, min_track_con: f32) -> Self {
             let graph = Mediagraph::new(
-                mediagraph_GraphType_HANDS,
+                HANDS_GRAPH_TYPE,
                 include_str!("hand_tracking_desktop_live.txt"),
                 "hand_landmarks",
             );
