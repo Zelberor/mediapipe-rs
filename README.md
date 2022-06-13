@@ -1,8 +1,9 @@
 # mediapipe-rs
 
-Simple rust bindings for mediapipe.
+Simple rust bindings for (mediapipe)[https://mediapipe.dev/].
 
 Forked from: https://github.com/angular-rust/ux-mediapipe 🙏
+
 And heavily based on this example: https://github.com/asprecic/mediapipe-qt-integration-example 🤌
 
 ## requirements
@@ -61,4 +62,4 @@ mkdir mediapipe
 cp -R ../mediapipe/mediapipe/modules ./mediapipe/modules
 ```
 
-The path to mediapipe may be different depending on where you've cloned it.
+The path to mediapipe may be different depending on where you have cloned it to.
