@@ -131,6 +131,46 @@ impl Drop for Detector {
     }
 }
 
+/// Effect calculator which interacts with the C++ library.
+pub struct Effect {
+    graph: *mut mediagraph_Effect,
+}
+
+impl Effect {
+    /// Creates a new Mediagraph with the given config.
+    pub fn new(graph_config: &str, output_node: &str) -> Self {
+        let graph_config = CString::new(graph_config).expect("CString::new failed");
+        let output_node = CString::new(output_node).expect("CString::new failed");
+
+        let graph: *mut mediagraph_Effect =
+            unsafe { mediagraph_Effect::Create(graph_config.as_ptr(), output_node.as_ptr()) };
+
+        Self { graph }
+    }
+
+    /// Processes the input frame, returns a slice of landmarks if any are detected.
+    pub fn process(&mut self, input: &Mat) -> Mat {
+        let mut data = input.clone();
+        let out_data = unsafe {
+            mediagraph_Effect_Process(
+                self.graph as *mut std::ffi::c_void,
+                data.data_mut(),
+                data.cols(),
+                data.rows(),
+            )
+        };
+        unsafe { Mat::from_raw(out_data as *mut std::ffi::c_void) }
+    }
+}
+
+impl Drop for Effect {
+    fn drop(&mut self) {
+        unsafe {
+            mediagraph_Effect_Effect_destructor(self.graph);
+        }
+    }
+}
+
 pub mod pose {
     //! Pose detection utilities.
     use super::*;
