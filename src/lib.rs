@@ -220,7 +220,7 @@ pub mod pose {
         pub fn new() -> Self {
             let graph = Detector::new(
                 POSE_GRAPH_TYPE,
-                include_str!("pose_tracking_cpu.txt"),
+                include_str!("graphs/pose_tracking_cpu.txt"),
                 "pose_landmarks",
             );
 
@@ -260,7 +260,7 @@ pub mod face_mesh {
         pub fn new() -> Self {
             let graph = Detector::new(
                 FACE_GRAPH_TYPE,
-                include_str!("face_mesh_desktop_live.txt"),
+                include_str!("graphs/face_mesh_desktop_live.txt"),
                 "multi_face_landmarks",
             );
 
@@ -325,7 +325,7 @@ pub mod hands {
         pub fn new() -> Self {
             let graph = Detector::new(
                 HANDS_GRAPH_TYPE,
-                include_str!("hand_tracking_desktop_live.txt"),
+                include_str!("graphs/hand_tracking_desktop_live.txt"),
                 "hand_landmarks",
             );
 
