@@ -3,10 +3,7 @@ extern crate bindgen;
 use std::path::PathBuf;
 
 fn main() {
-    //     println!("cargo:rustc-link-lib=stdc++");
-    //     println!("cargo:rustc-link-lib=opencv4");
     println!("cargo:rustc-link-lib=mediagraph");
-    // println!("cargo:rerun-if-changed=wrapper.h");
 
     let bindings = bindgen::Builder::default()
         .clang_arg("-xc++")
