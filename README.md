@@ -1,8 +1,9 @@
 # mediapipe-rs
 
-Rust and mediapipe.
+Simple rust bindings for mediapipe.
 
-Mediapipe is a framework for building AI-powered computer vision and augmented reality applications. It provides high level libraries exposing some of its solutions for common problems. This package makes some of these solutions available in Rust. In order to use it we must build a custom mediapipe C++ library.
+Forked from: https://github.com/angular-rust/ux-mediapipe 🙏
+And heavily based on this example: https://github.com/asprecic/mediapipe-qt-integration-example 🤌
 
 ## requirements
 
@@ -10,7 +11,9 @@ Mediapipe is a framework for building AI-powered computer vision and augmented r
 
 ## setup
 
-Clone the modified Mediapipe repo:
+Mediapipe is a framework for building AI-powered computer vision applications. It provides high level libraries exposing some of its solutions for common problems. This package makes some of these solutions available in Rust. In order to use it we must build a custom mediapipe C++ library.
+
+Clone the modified Mediapipe repo.
 
 ```shell
 git clone https://github.com/julesyoungberg/mediapipe.git

@@ -5,10 +5,9 @@
 #![allow(improper_ctypes)]
 #![allow(deref_nullptr)]
 
-// -------------------------------------------------------------------------------------------------
-// LINKING
-// -------------------------------------------------------------------------------------------------
+//! This library brings Google's Mediapipe to Rust.
 
+// LINKING
 #[link(name = "mediagraph")]
 extern "C" {}
 
@@ -17,7 +16,7 @@ use std::ffi::CString;
 
 mod bindings;
 
-pub use bindings::*;
+use bindings::*;
 
 type GraphType = mediagraph_GraphType;
 pub type Landmark = mediagraph_Landmark;
@@ -34,6 +33,8 @@ impl Default for Landmark {
     }
 }
 
+/// Represents a detected pose, as 33 landmarks.
+/// Landmark names are in [pose::PoseLandmark].
 pub struct Pose {
     pub data: [Landmark; 33],
 }
@@ -46,6 +47,8 @@ impl Default for Pose {
     }
 }
 
+/// Represents a detected hand, as 21 landmarks.
+/// Landmark names are in [hands::HandLandmark]
 pub struct Hand {
     pub data: [Landmark; 21],
 }
@@ -58,6 +61,7 @@ impl Default for Hand {
     }
 }
 
+/// Represents a detected face mesh, as 478 landmarks.
 pub struct FaceMesh {
     pub data: [Landmark; 478],
 }
@@ -70,7 +74,7 @@ impl Default for FaceMesh {
     }
 }
 
-struct Mediagraph {
+pub struct Mediagraph {
     graph: *mut mediagraph_Mediagraph,
     num_landmarks: u32,
 }
@@ -117,8 +121,10 @@ impl Mediagraph {
 }
 
 pub mod pose {
+    //! Pose detection utilities.
     use super::*;
 
+    /// Pose landmark indices.
     pub enum PoseLandmark {
         NOSE = 0,
         LEFT_EYE_INNER = 1,
@@ -180,6 +186,7 @@ pub mod pose {
             }
         }
 
+        /// Processes the input frame, returns a pose if detected.
         pub fn process(&mut self, input: &Mat) -> Option<Pose> {
             let landmarks = self.graph.process(input);
 
@@ -201,6 +208,7 @@ pub mod pose {
 }
 
 pub mod face_mesh {
+    //! Face mesh utilities.
     use super::*;
 
     pub struct FaceMeshDetector {
@@ -233,6 +241,7 @@ pub mod face_mesh {
             }
         }
 
+        /// Processes the input frame, returns a face mesh if detected.
         pub fn process(&mut self, input: &Mat) -> Option<FaceMesh> {
             let landmarks = self.graph.process(input);
 
@@ -254,8 +263,10 @@ pub mod face_mesh {
 }
 
 pub mod hands {
+    //! Hand detection utilities.
     use super::*;
 
+    /// Hand landmark indices.
     pub enum HandLandmark {
         WRIST = 0,
         THUMB_CMC = 1,
@@ -305,6 +316,7 @@ pub mod hands {
             }
         }
 
+        /// Processes the input frame, returns a tuple of hands if detected.
         pub fn process(&mut self, input: &Mat) -> Option<[Hand; 2]> {
             let landmarks = self.graph.process(input);
 
