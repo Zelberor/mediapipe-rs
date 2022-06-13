@@ -41,10 +41,10 @@ cp mediapipe/mediagraph.h /usr/local/include/mediagraph.h
 
 ## examples
 
-Examples are located in the `./examples` directory. Run them with
+Examples are located in the `./examples` directory. Run `face_mesh.rs` with
 
 ```shell
-cargo run --release --example hello
+cargo run --release --example face_mesh
 ```
 
 ## usage
