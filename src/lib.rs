@@ -173,28 +173,18 @@ pub mod pose {
     }
 
     pub struct PoseDetector {
-        pub mode: bool,         // false
-        pub smooth: bool,       // true,
-        pub detection_con: f32, // 0.5
-        pub track_con: f32,     // 0.5
         graph: Detector,
     }
 
     impl PoseDetector {
-        pub fn new(mode: bool, smooth: bool, detection_con: f32, track_con: f32) -> Self {
+        pub fn new() -> Self {
             let graph = Detector::new(
                 POSE_GRAPH_TYPE,
                 include_str!("pose_tracking_cpu.txt"),
                 "pose_landmarks",
             );
 
-            Self {
-                mode,
-                smooth,
-                detection_con,
-                track_con,
-                graph,
-            }
+            Self { graph }
         }
 
         /// Processes the input frame, returns a pose if detected.
@@ -213,7 +203,7 @@ pub mod pose {
 
     impl Default for PoseDetector {
         fn default() -> Self {
-            Self::new(false, true, 0.5, 0.5)
+            Self::new()
         }
     }
 }
@@ -223,33 +213,18 @@ pub mod face_mesh {
     use super::*;
 
     pub struct FaceMeshDetector {
-        pub static_mode: bool,      // false
-        pub max_faces: usize,       // 2
-        pub min_detection_con: f32, // 0.5
-        pub min_track_con: f32,     // 0.5
         graph: Detector,
     }
 
     impl FaceMeshDetector {
-        pub fn new(
-            static_mode: bool,
-            max_faces: usize,
-            min_detection_con: f32,
-            min_track_con: f32,
-        ) -> Self {
+        pub fn new() -> Self {
             let graph = Detector::new(
                 FACE_GRAPH_TYPE,
                 include_str!("face_mesh_desktop_live.txt"),
                 "multi_face_landmarks",
             );
 
-            Self {
-                static_mode,
-                max_faces,
-                min_detection_con,
-                min_track_con,
-                graph,
-            }
+            Self { graph }
         }
 
         /// Processes the input frame, returns a face mesh if detected.
@@ -268,7 +243,7 @@ pub mod face_mesh {
 
     impl Default for FaceMeshDetector {
         fn default() -> Self {
-            Self::new(false, 2, 0.5, 0.5)
+            Self::new()
         }
     }
 }
@@ -303,28 +278,18 @@ pub mod hands {
     }
 
     pub struct HandDetector {
-        pub mode: bool,
-        pub max_hands: usize,
-        pub detection_con: f32, // 0.5
-        pub min_track_con: f32, // 0.5
         graph: Detector,
     }
 
     impl HandDetector {
-        pub fn new(mode: bool, max_hands: usize, detection_con: f32, min_track_con: f32) -> Self {
+        pub fn new() -> Self {
             let graph = Detector::new(
                 HANDS_GRAPH_TYPE,
                 include_str!("hand_tracking_desktop_live.txt"),
                 "hand_landmarks",
             );
 
-            Self {
-                mode,
-                max_hands,
-                detection_con,
-                min_track_con,
-                graph,
-            }
+            Self { graph }
         }
 
         /// Processes the input frame, returns a tuple of hands if detected.
@@ -346,7 +311,7 @@ pub mod hands {
 
     impl Default for HandDetector {
         fn default() -> Self {
-            Self::new(false, 2, 0.5, 0.5)
+            Self::new()
         }
     }
 }
