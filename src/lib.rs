@@ -56,16 +56,9 @@ impl Default for Pose {
 
 /// Represents a detected hand, as 21 landmarks.
 /// Landmark names are in [hands::HandLandmark]
+#[derive(Default)]
 pub struct Hand {
     pub data: [Landmark; 21],
-}
-
-impl Default for Hand {
-    fn default() -> Self {
-        Self {
-            data: [Landmark::default(); 21],
-        }
-    }
 }
 
 /// Represents a detected face mesh, as 478 landmarks.
@@ -205,7 +198,7 @@ pub mod pose {
             }
 
             let mut pose = Pose::default();
-            pose.data.copy_from_slice(&landmarks[..]);
+            pose.data.copy_from_slice(landmarks);
             Some(pose)
         }
     }
@@ -260,7 +253,7 @@ pub mod face_mesh {
             }
 
             let mut face_mesh = FaceMesh::default();
-            face_mesh.data.copy_from_slice(&landmarks[..]);
+            face_mesh.data.copy_from_slice(landmarks);
             Some(face_mesh)
         }
     }
