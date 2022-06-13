@@ -19,14 +19,14 @@ mod bindings;
 use bindings::*;
 
 /// The C++ mediagraph graph type.
-pub type GraphType = mediagraph_GraphType;
+pub type DetectorType = mediagraph_DetectorType;
 
 /// The C++ mediagraph landmark type.
 pub type Landmark = mediagraph_Landmark;
 
-pub const FACE_GRAPH_TYPE: GraphType = mediagraph_GraphType_FACE;
-pub const HANDS_GRAPH_TYPE: GraphType = mediagraph_GraphType_HANDS;
-pub const POSE_GRAPH_TYPE: GraphType = mediagraph_GraphType_POSE;
+pub const FACE_GRAPH_TYPE: DetectorType = mediagraph_DetectorType_FACE;
+pub const HANDS_GRAPH_TYPE: DetectorType = mediagraph_DetectorType_HANDS;
+pub const POSE_GRAPH_TYPE: DetectorType = mediagraph_DetectorType_POSE;
 
 impl Default for Landmark {
     fn default() -> Self {
@@ -74,20 +74,20 @@ impl Default for FaceMesh {
     }
 }
 
-/// Graph calculator which interacts with the C++ library.
-pub struct Mediagraph {
-    graph: *mut mediagraph_Mediagraph,
+/// Detector calculator which interacts with the C++ library.
+pub struct Detector {
+    graph: *mut mediagraph_Detector,
     num_landmarks: u32,
 }
 
-impl Mediagraph {
+impl Detector {
     /// Creates a new Mediagraph with the given config.
-    pub fn new(graph_type: GraphType, graph_config: &str, output_node: &str) -> Self {
+    pub fn new(graph_type: DetectorType, graph_config: &str, output_node: &str) -> Self {
         let graph_config = CString::new(graph_config).expect("CString::new failed");
         let output_node = CString::new(output_node).expect("CString::new failed");
 
-        let graph: *mut mediagraph_Mediagraph = unsafe {
-            mediagraph_Mediagraph::Create(graph_type, graph_config.as_ptr(), output_node.as_ptr())
+        let graph: *mut mediagraph_Detector = unsafe {
+            mediagraph_Detector::Create(graph_type, graph_config.as_ptr(), output_node.as_ptr())
         };
 
         let num_landmarks = match graph_type {
@@ -107,7 +107,7 @@ impl Mediagraph {
     pub fn process(&mut self, input: &Mat) -> &[Landmark] {
         let mut data = input.clone();
         let raw_landmarks = unsafe {
-            mediagraph_Mediagraph_Process(
+            mediagraph_Detector_Process(
                 self.graph as *mut std::ffi::c_void,
                 data.data_mut(),
                 data.cols(),
@@ -123,10 +123,10 @@ impl Mediagraph {
     }
 }
 
-impl Drop for Mediagraph {
+impl Drop for Detector {
     fn drop(&mut self) {
         unsafe {
-            mediagraph_Mediagraph_Mediagraph_destructor(self.graph);
+            mediagraph_Detector_Detector_destructor(self.graph);
         }
     }
 }
@@ -177,12 +177,12 @@ pub mod pose {
         pub smooth: bool,       // true,
         pub detection_con: f32, // 0.5
         pub track_con: f32,     // 0.5
-        graph: Mediagraph,
+        graph: Detector,
     }
 
     impl PoseDetector {
         pub fn new(mode: bool, smooth: bool, detection_con: f32, track_con: f32) -> Self {
-            let graph = Mediagraph::new(
+            let graph = Detector::new(
                 POSE_GRAPH_TYPE,
                 include_str!("pose_tracking_cpu.txt"),
                 "pose_landmarks",
@@ -227,7 +227,7 @@ pub mod face_mesh {
         pub max_faces: usize,       // 2
         pub min_detection_con: f32, // 0.5
         pub min_track_con: f32,     // 0.5
-        graph: Mediagraph,
+        graph: Detector,
     }
 
     impl FaceMeshDetector {
@@ -237,7 +237,7 @@ pub mod face_mesh {
             min_detection_con: f32,
             min_track_con: f32,
         ) -> Self {
-            let graph = Mediagraph::new(
+            let graph = Detector::new(
                 FACE_GRAPH_TYPE,
                 include_str!("face_mesh_desktop_live.txt"),
                 "multi_face_landmarks",
@@ -307,12 +307,12 @@ pub mod hands {
         pub max_hands: usize,
         pub detection_con: f32, // 0.5
         pub min_track_con: f32, // 0.5
-        graph: Mediagraph,
+        graph: Detector,
     }
 
     impl HandDetector {
         pub fn new(mode: bool, max_hands: usize, detection_con: f32, min_track_con: f32) -> Self {
-            let graph = Mediagraph::new(
+            let graph = Detector::new(
                 HANDS_GRAPH_TYPE,
                 include_str!("hand_tracking_desktop_live.txt"),
                 "hand_landmarks",
