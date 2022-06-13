@@ -220,7 +220,7 @@ pub mod pose {
         pub fn new() -> Self {
             let graph = Detector::new(
                 POSE_GRAPH_TYPE,
-                include_str!("graphs/pose_tracking_cpu.txt"),
+                include_str!("graphs/pose_tracking_cpu.pbtxt"),
                 "pose_landmarks",
             );
 
@@ -260,7 +260,7 @@ pub mod face_mesh {
         pub fn new() -> Self {
             let graph = Detector::new(
                 FACE_GRAPH_TYPE,
-                include_str!("graphs/face_mesh_desktop_live.txt"),
+                include_str!("graphs/face_mesh_desktop_live.pbtxt"),
                 "multi_face_landmarks",
             );
 
@@ -325,7 +325,7 @@ pub mod hands {
         pub fn new() -> Self {
             let graph = Detector::new(
                 HANDS_GRAPH_TYPE,
-                include_str!("graphs/hand_tracking_desktop_live.txt"),
+                include_str!("graphs/hand_tracking_desktop_live.pbtxt"),
                 "hand_landmarks",
             );
 
@@ -350,6 +350,37 @@ pub mod hands {
     }
 
     impl Default for HandDetector {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+}
+
+pub mod segmentation {
+    //! Selfie segmentation utilities.
+    use super::*;
+
+    pub struct Segmentor {
+        graph: Effect,
+    }
+
+    impl Segmentor {
+        pub fn new() -> Self {
+            let graph = Effect::new(
+                include_str!("graphs/selfie_segmentation_cpu.pbtxt"),
+                "output_video",
+            );
+
+            Self { graph }
+        }
+
+        /// Processes the input frame, returns the output frame.
+        pub fn process(&mut self, input: &Mat) -> Mat {
+            self.graph.process(input)
+        }
+    }
+
+    impl Default for Segmentor {
         fn default() -> Self {
             Self::new()
         }
