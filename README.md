@@ -1,6 +1,6 @@
 # mediapipe-rs
 
-Simple rust bindings for (mediapipe)[https://mediapipe.dev/].
+Simple rust bindings for [mediapipe](https://mediapipe.dev/).
 
 Forked from: https://github.com/angular-rust/ux-mediapipe 🙏
 
