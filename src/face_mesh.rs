@@ -8,9 +8,11 @@ pub struct FaceMeshDetector {
 impl FaceMeshDetector {
     pub fn new() -> Self {
         let graph = Detector::new(
-            FACE_GRAPH_TYPE,
             include_str!("graphs/face_mesh_desktop_live.pbtxt"),
-            "multi_face_landmarks",
+            vec![Output {
+                type_: FeatureType::Face,
+                name: "multi_face_landmarks".into(),
+            }],
         );
 
         Self { graph }
@@ -20,12 +22,12 @@ impl FaceMeshDetector {
     pub fn process(&mut self, input: &Mat) -> Option<FaceMesh> {
         let landmarks = self.graph.process(input);
 
-        if landmarks.is_empty() {
+        if landmarks[0].is_empty() {
             return None;
         }
 
         let mut face_mesh = FaceMesh::default();
-        face_mesh.data.copy_from_slice(landmarks);
+        face_mesh.data.copy_from_slice(landmarks[0][0].as_slice());
         Some(face_mesh)
     }
 }

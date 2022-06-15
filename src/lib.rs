@@ -22,15 +22,61 @@ pub mod segmentation;
 
 use bindings::*;
 
-/// The C++ mediagraph graph type.
-pub type DetectorType = mediagraph_DetectorType;
+type mFeatureType = mediagraph_FeatureType;
+type mOutput = mediagraph_Output;
+type mFeature = mediagraph_Feature;
+type mFeatureList = mediagraph_FeatureList;
+
+/// The type of visual feature made up of landmarks.
+#[derive(Debug, Clone, Copy)]
+pub enum FeatureType {
+    Face,
+    Hands,
+    Pose,
+}
+
+impl FeatureType {
+    fn num_landmarks(&self) -> usize {
+        match self {
+            FeatureType::Face => 478,
+            FeatureType::Hands => 42,
+            FeatureType::Pose => 33,
+        }
+    }
+}
+
+impl Into<mFeatureType> for FeatureType {
+    fn into(self) -> mFeatureType {
+        match self {
+            FeatureType::Face => mediagraph_FeatureType_FACE,
+            FeatureType::Hands => mediagraph_FeatureType_HANDS,
+            FeatureType::Pose => mediagraph_FeatureType_POSE,
+        }
+    }
+}
+
+/// The definition of a graph output.
+#[derive(Debug, Clone)]
+pub struct Output {
+    type_: FeatureType,
+    name: String,
+}
+
+impl Into<mOutput> for Output {
+    fn into(self) -> mOutput {
+        let name = CString::new(self.name)
+            .expect("CString::new failed")
+            .into_raw();
+
+        mOutput {
+            type_: self.type_.into(),
+            name,
+        }
+    }
+}
 
 /// The C++ mediagraph landmark type.
 pub type Landmark = mediagraph_Landmark;
-
-pub const FACE_GRAPH_TYPE: DetectorType = mediagraph_DetectorType_FACE;
-pub const HANDS_GRAPH_TYPE: DetectorType = mediagraph_DetectorType_HANDS;
-pub const POSE_GRAPH_TYPE: DetectorType = mediagraph_DetectorType_POSE;
 
 impl Default for Landmark {
     fn default() -> Self {
@@ -81,36 +127,41 @@ impl Default for FaceMesh {
 /// Detector calculator which interacts with the C++ library.
 pub struct Detector {
     graph: *mut mediagraph_Detector,
-    num_landmarks: u32,
+    outputs: Vec<Output>,
 }
 
 impl Detector {
     /// Creates a new Mediagraph with the given config.
-    pub fn new(graph_type: DetectorType, graph_config: &str, output_node: &str) -> Self {
+    pub fn new(graph_config: &str, output_config: Vec<Output>) -> Self {
+        assert!(
+            output_config.len() > 0,
+            "must specify at least one output feature"
+        );
         let graph_config = CString::new(graph_config).expect("CString::new failed");
-        let output_node = CString::new(output_node).expect("CString::new failed");
+
+        let outputs = output_config
+            .iter()
+            .map(|f| f.clone().into())
+            .collect::<Vec<mOutput>>();
 
         let graph: *mut mediagraph_Detector = unsafe {
-            mediagraph_Detector::Create(graph_type, graph_config.as_ptr(), output_node.as_ptr())
-        };
-
-        let num_landmarks = match graph_type {
-            FACE_GRAPH_TYPE => 478,
-            HANDS_GRAPH_TYPE => 42,
-            POSE_GRAPH_TYPE => 33,
-            _ => 0,
+            mediagraph_Detector::Create(
+                graph_config.as_ptr(),
+                outputs.as_ptr(),
+                outputs.len() as u8,
+            )
         };
 
         Self {
             graph,
-            num_landmarks,
+            outputs: output_config,
         }
     }
 
     /// Processes the input frame, returns a slice of landmarks if any are detected.
-    pub fn process(&mut self, input: &Mat) -> &[Landmark] {
+    pub fn process(&mut self, input: &Mat) -> Vec<Vec<Vec<Landmark>>> {
         let mut data = input.clone();
-        let raw_landmarks = unsafe {
+        let results = unsafe {
             mediagraph_Detector_Process(
                 self.graph as *mut std::ffi::c_void,
                 data.data_mut(),
@@ -118,11 +169,30 @@ impl Detector {
                 data.rows(),
             )
         };
-        if raw_landmarks.is_null() {
-            return &[];
+
+        let mut landmarks = vec![];
+
+        let feature_lists =
+            unsafe { std::slice::from_raw_parts(results, self.outputs.len() as usize) };
+
+        for (i, feature_list) in feature_lists.iter().enumerate() {
+            let num_landmarks = self.outputs[i].type_.num_landmarks();
+            let mut fl = vec![];
+            let features = unsafe {
+                std::slice::from_raw_parts(
+                    feature_list.features,
+                    feature_list.num_features as usize,
+                )
+            };
+
+            for feature in features.iter() {
+                let landmarks = unsafe { std::slice::from_raw_parts(feature.data, num_landmarks) };
+                fl.push(landmarks.to_vec());
+            }
+
+            landmarks.push(fl);
         }
-        let landmarks =
-            unsafe { std::slice::from_raw_parts(raw_landmarks, self.num_landmarks as usize) };
+
         landmarks
     }
 }

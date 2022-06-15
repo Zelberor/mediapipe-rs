@@ -45,9 +45,11 @@ pub struct PoseDetector {
 impl PoseDetector {
     pub fn new() -> Self {
         let graph = Detector::new(
-            POSE_GRAPH_TYPE,
             include_str!("graphs/pose_tracking_cpu.pbtxt"),
-            "pose_landmarks",
+            vec![Output {
+                type_: FeatureType::Pose,
+                name: "pose_landmarks".into(),
+            }],
         );
 
         Self { graph }
@@ -55,14 +57,16 @@ impl PoseDetector {
 
     /// Processes the input frame, returns a pose if detected.
     pub fn process(&mut self, input: &Mat) -> Option<Pose> {
-        let landmarks = self.graph.process(input);
+        let result = self.graph.process(input);
 
-        if landmarks.is_empty() {
+        if result[0].is_empty() {
             return None;
         }
 
+        let landmarks = &result[0][0];
+
         let mut pose = Pose::default();
-        pose.data.copy_from_slice(landmarks);
+        pose.data.copy_from_slice(landmarks.as_slice());
         Some(pose)
     }
 }

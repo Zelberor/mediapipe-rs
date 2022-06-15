@@ -33,9 +33,11 @@ pub struct HandDetector {
 impl HandDetector {
     pub fn new() -> Self {
         let graph = Detector::new(
-            HANDS_GRAPH_TYPE,
             include_str!("graphs/hand_tracking_desktop_live.pbtxt"),
-            "hand_landmarks",
+            vec![Output {
+                type_: FeatureType::Hands,
+                name: "hand_landmarks".into(),
+            }],
         );
 
         Self { graph }
@@ -43,11 +45,13 @@ impl HandDetector {
 
     /// Processes the input frame, returns a tuple of hands if detected.
     pub fn process(&mut self, input: &Mat) -> Option<[Hand; 2]> {
-        let landmarks = self.graph.process(input);
+        let result = self.graph.process(input);
 
-        if landmarks.is_empty() {
+        if result[0].is_empty() {
             return None;
         }
+
+        let landmarks = &result[0][0];
 
         let mut lh = Hand::default();
         let mut rh = Hand::default();
