@@ -13,7 +13,6 @@ name = "mediapipe"
 
 [dependencies]
 cgmath = "0.18.0"
-cxx = "1.0.68"
 libc = "0.2.0"
 opencv = { version = "0.63", features = ["clang-runtime"] }
 protobuf = "2.23.0"

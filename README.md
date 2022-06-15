@@ -39,14 +39,6 @@ cp bazel-bin/mediapipe/libmediagraph.so /usr/local/lib/libmediagraph.so
 cp mediapipe/mediagraph.h /usr/local/include/mediagraph.h
 ```
 
-## examples
-
-Examples are located in the `./examples` directory. Run `face_mesh.rs` with
-
-```shell
-cargo run --release --example face_mesh
-```
-
 ## usage
 
 Add the following to your dependencies list in `Cargo.toml`:
@@ -63,3 +55,11 @@ cp -R ../mediapipe/mediapipe/modules ./mediapipe/modules
 ```
 
 The path to mediapipe may be different depending on where you have cloned it to.
+
+## examples
+
+Examples are located in the `./examples` directory. Run `face_mesh.rs` with
+
+```shell
+cargo run --release --example face_mesh
+```
