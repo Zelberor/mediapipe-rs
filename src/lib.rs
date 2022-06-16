@@ -24,8 +24,6 @@ use bindings::*;
 
 type mFeatureType = mediagraph_FeatureType;
 type mOutput = mediagraph_Output;
-type mFeature = mediagraph_Feature;
-type mFeatureList = mediagraph_FeatureList;
 
 /// The type of visual feature made up of landmarks.
 #[derive(Debug, Clone, Copy)]
@@ -161,33 +159,36 @@ impl Detector {
     /// Processes the input frame, returns a slice of landmarks if any are detected.
     pub fn process(&mut self, input: &Mat) -> Vec<Vec<Vec<Landmark>>> {
         let mut data = input.clone();
+        let mut num_features = vec![0; self.outputs.len()];
+
         let results = unsafe {
+            let nf_data = num_features.as_mut_slice();
             mediagraph_Detector_Process(
                 self.graph as *mut std::ffi::c_void,
                 data.data_mut(),
                 data.cols(),
                 data.rows(),
+                nf_data.as_mut_ptr(),
             )
         };
 
         let mut landmarks = vec![];
+        let mut data_index = 0;
 
-        let feature_lists =
-            unsafe { std::slice::from_raw_parts(results, self.outputs.len() as usize) };
-
-        for (i, feature_list) in feature_lists.iter().enumerate() {
-            let num_landmarks = self.outputs[i].type_.num_landmarks();
+        for (i, &count) in num_features.iter().enumerate() {
             let mut fl = vec![];
-            let features = unsafe {
-                std::slice::from_raw_parts(
-                    feature_list.features,
-                    feature_list.num_features as usize,
-                )
-            };
+            if count == 0 {
+                landmarks.push(fl);
+                continue;
+            }
 
-            for feature in features.iter() {
-                let landmarks = unsafe { std::slice::from_raw_parts(feature.data, num_landmarks) };
-                fl.push(landmarks.to_vec());
+            let num_landmarks = self.outputs[i].type_.num_landmarks();
+
+            for _ in 0..count {
+                let l =
+                    unsafe { std::slice::from_raw_parts(results.add(data_index), num_landmarks) };
+                data_index += num_landmarks;
+                fl.push(l.to_vec());
             }
 
             landmarks.push(fl);

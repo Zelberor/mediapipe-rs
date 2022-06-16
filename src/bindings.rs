@@ -116,75 +116,6 @@ fn bindgen_test_layout_mediagraph_Output() {
     );
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct mediagraph_Feature {
-    pub data: *mut mediagraph_Landmark,
-}
-#[test]
-fn bindgen_test_layout_mediagraph_Feature() {
-    assert_eq!(
-        ::std::mem::size_of::<mediagraph_Feature>(),
-        8usize,
-        concat!("Size of: ", stringify!(mediagraph_Feature))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<mediagraph_Feature>(),
-        8usize,
-        concat!("Alignment of ", stringify!(mediagraph_Feature))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<mediagraph_Feature>())).data as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(mediagraph_Feature),
-            "::",
-            stringify!(data)
-        )
-    );
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct mediagraph_FeatureList {
-    pub num_features: u8,
-    pub features: *mut mediagraph_Feature,
-}
-#[test]
-fn bindgen_test_layout_mediagraph_FeatureList() {
-    assert_eq!(
-        ::std::mem::size_of::<mediagraph_FeatureList>(),
-        16usize,
-        concat!("Size of: ", stringify!(mediagraph_FeatureList))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<mediagraph_FeatureList>(),
-        8usize,
-        concat!("Alignment of ", stringify!(mediagraph_FeatureList))
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<mediagraph_FeatureList>())).num_features as *const _ as usize
-        },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(mediagraph_FeatureList),
-            "::",
-            stringify!(num_features)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<mediagraph_FeatureList>())).features as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(mediagraph_FeatureList),
-            "::",
-            stringify!(features)
-        )
-    );
-}
-#[repr(C)]
 pub struct mediagraph_Detector__bindgen_vtable(::std::os::raw::c_void);
 #[repr(C)]
 #[derive(Debug)]
@@ -227,13 +158,14 @@ extern "C" {
     pub fn mediagraph_Detector_Detector_destructor(this: *mut mediagraph_Detector);
 }
 extern "C" {
-    #[link_name = "\u{1}__ZN10mediagraph8Detector7ProcessEPhii"]
+    #[link_name = "\u{1}__ZN10mediagraph8Detector7ProcessEPhiiS1_"]
     pub fn mediagraph_Detector_Process(
         this: *mut ::std::os::raw::c_void,
         data: *mut u8,
         width: ::std::os::raw::c_int,
         height: ::std::os::raw::c_int,
-    ) -> *mut mediagraph_FeatureList;
+        num_features: *mut u8,
+    ) -> *mut mediagraph_Landmark;
 }
 #[repr(C)]
 pub struct mediagraph_Effect__bindgen_vtable(::std::os::raw::c_void);
