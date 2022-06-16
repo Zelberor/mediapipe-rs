@@ -43,22 +43,10 @@ impl HandDetector {
         Self { graph }
     }
 
-    /// Processes the input frame, returns a tuple of hands if detected.
-    pub fn process(&mut self, input: &Mat) -> Option<[Hand; 2]> {
+    /// Processes the input frame, returns a list of hands
+    pub fn process(&mut self, input: &Mat) -> Vec<Vec<Landmark>> {
         let result = self.graph.process(input);
-
-        if result[0].is_empty() {
-            return None;
-        }
-
-        let landmarks = &result[0][0];
-
-        let mut lh = Hand::default();
-        let mut rh = Hand::default();
-        lh.data.copy_from_slice(&landmarks[0..21]);
-        rh.data.copy_from_slice(&landmarks[21..42]);
-
-        Some([lh, rh])
+        result[0].clone()
     }
 }
 

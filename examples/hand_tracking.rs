@@ -34,11 +34,9 @@ pub fn hand_tracking() -> Result<()> {
 
             highgui::imshow(window, &mut flip_frame)?;
 
-            if let Some(hands) = result {
-                println!(
-                    "LANDMARK: {} {} {}",
-                    hands[0].data[0].x, hands[0].data[0].y, hands[0].data[0].z
-                );
+            if !result.is_empty() {
+                let landmark = result[0][0];
+                println!("LANDMARK: {} {} {}", landmark.x, landmark.y, landmark.z);
             }
         } else {
             println!("WARN: Skip empty frame");

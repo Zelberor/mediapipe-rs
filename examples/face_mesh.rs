@@ -34,11 +34,9 @@ fn face_mesh() -> Result<()> {
 
             highgui::imshow(window, &mut flip_frame)?;
 
-            if let Some(fm) = result {
-                println!(
-                    "LANDMARK: {} {} {}",
-                    fm.data[0].x, fm.data[0].y, fm.data[0].z
-                );
+            if !result.is_empty() {
+                let landmark = result[0][0];
+                println!("LANDMARK: {} {} {}", landmark.x, landmark.y, landmark.z);
             }
         } else {
             println!("WARN: Skip empty frame");

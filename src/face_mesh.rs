@@ -19,16 +19,9 @@ impl FaceMeshDetector {
     }
 
     /// Processes the input frame, returns a face mesh if detected.
-    pub fn process(&mut self, input: &Mat) -> Option<FaceMesh> {
+    pub fn process(&mut self, input: &Mat) -> Vec<Vec<Landmark>> {
         let landmarks = self.graph.process(input);
-
-        if landmarks[0].is_empty() {
-            return None;
-        }
-
-        let mut face_mesh = FaceMesh::default();
-        face_mesh.data.copy_from_slice(landmarks[0][0].as_slice());
-        Some(face_mesh)
+        landmarks[0].clone()
     }
 }
 
