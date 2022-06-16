@@ -37,7 +37,7 @@ node {
   output_side_packet: "PACKET:1:with_attention"
   node_options: {
     [type.googleapis.com/mediapipe.ConstantSidePacketCalculatorOptions]: {
-      packet { int_value: 1 }
+      packet { int_value: 2 }
       packet { bool_value: true }
     }
   }
