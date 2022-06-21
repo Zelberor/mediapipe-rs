@@ -47,11 +47,10 @@ Add the following to your dependencies list in `Cargo.toml`:
 mediapipe = { git = "https://github.com/julesyoungberg/mediapipe-rs" }
 ```
 
-Mediapipe relies on tflite files which must be available at `./mediapipe/modules/`. The easiest way to do this is
+Mediapipe relies on tflite files which must be available at `./mediapipe/modules/`. The easiest way to satisfy this is by creating a symbolic link to mediapipe. Run the following command from the project directory.
 
 ```shell
-mkdir mediapipe
-cp -R ../mediapipe/mediapipe/modules ./mediapipe/modules
+ln -s ../mediapipe/mediapipe .
 ```
 
 The path to mediapipe may be different depending on where you have cloned it to.
