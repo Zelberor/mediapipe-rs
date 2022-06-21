@@ -17,6 +17,7 @@ use std::ffi::CString;
 mod bindings;
 pub mod face_mesh;
 pub mod hands;
+pub mod holistic;
 pub mod pose;
 pub mod segmentation;
 
@@ -29,6 +30,7 @@ type mOutput = mediagraph_Output;
 #[derive(Debug, Clone, Copy)]
 pub enum FeatureType {
     Face,
+    Hand,
     Hands,
     Pose,
 }
@@ -37,6 +39,7 @@ impl FeatureType {
     fn num_landmarks(&self) -> usize {
         match self {
             FeatureType::Face => 478,
+            FeatureType::Hand => 21,
             FeatureType::Hands => 42,
             FeatureType::Pose => 33,
         }
@@ -47,6 +50,7 @@ impl Into<mFeatureType> for FeatureType {
     fn into(self) -> mFeatureType {
         match self {
             FeatureType::Face => mediagraph_FeatureType_FACE,
+            FeatureType::Hand => mediagraph_FeatureType_HANDS,
             FeatureType::Hands => mediagraph_FeatureType_HANDS,
             FeatureType::Pose => mediagraph_FeatureType_POSE,
         }
@@ -73,7 +77,7 @@ impl Into<mOutput> for Output {
     }
 }
 
-/// The C++ mediagraph landmark type.
+/// The mediagraph landmark struct from C++.
 pub type Landmark = mediagraph_Landmark;
 
 impl Default for Landmark {

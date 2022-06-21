@@ -6,6 +6,13 @@ input_stream: "input_video"
 # CPU image with rendered results. (ImageFrame)
 output_stream: "output_video"
 
+output_stream: "pose_landmarks"
+# output_stream: "pose_roi"
+# output_stream: "pose_detection"
+output_stream: "face_landmarks"
+output_stream: "left_hand_landmarks"
+output_stream: "right_hand_landmarks"
+
 # Throttles the images flowing downstream for flow control. It passes through
 # the very first incoming image unaltered, and waits for downstream nodes
 # (calculators and subgraphs) in the graph to finish their tasks before it
