@@ -72,9 +72,12 @@ fn bindgen_test_layout_mediagraph_Landmark() {
         )
     );
 }
-pub const mediagraph_FeatureType_POSE: mediagraph_FeatureType = 0;
-pub const mediagraph_FeatureType_HANDS: mediagraph_FeatureType = 1;
-pub const mediagraph_FeatureType_FACE: mediagraph_FeatureType = 2;
+pub const mediagraph_FeatureType_FACE: mediagraph_FeatureType = 0;
+pub const mediagraph_FeatureType_FACES: mediagraph_FeatureType = 1;
+pub const mediagraph_FeatureType_HAND: mediagraph_FeatureType = 2;
+pub const mediagraph_FeatureType_HANDS: mediagraph_FeatureType = 3;
+pub const mediagraph_FeatureType_POSE: mediagraph_FeatureType = 4;
+pub const mediagraph_FeatureType_POSES: mediagraph_FeatureType = 5;
 pub type mediagraph_FeatureType = ::std::os::raw::c_uint;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

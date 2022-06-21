@@ -16,7 +16,7 @@ fn face_mesh() -> Result<()> {
     cap.set(videoio::CAP_PROP_FRAME_HEIGHT, 480.0)?;
     cap.set(videoio::CAP_PROP_FPS, 30.0)?;
 
-    let mut detector = face_mesh::HolisticDetector::default();
+    let mut detector = holistic::HolisticDetector::default();
 
     let mut raw_frame = Mat::default();
     let mut rgb_frame = Mat::default();

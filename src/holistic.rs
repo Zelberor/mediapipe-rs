@@ -10,19 +10,19 @@ impl HolisticDetector {
         let outputs = vec![
             Output {
                 type_: FeatureType::Pose,
-                name: "pose_landmarks",
+                name: "pose_landmarks".into(),
             },
             Output {
                 type_: FeatureType::Face,
-                name: "face_landmarks",
+                name: "face_landmarks".into(),
             },
             Output {
                 type_: FeatureType::Hand,
-                name: "left_hand_landmarks",
+                name: "left_hand_landmarks".into(),
             },
             Output {
                 type_: FeatureType::Hand,
-                name: "right_hand_landmarks",
+                name: "right_hand_landmarks".into(),
             },
         ];
 

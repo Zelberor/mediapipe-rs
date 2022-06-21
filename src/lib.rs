@@ -30,18 +30,22 @@ type mOutput = mediagraph_Output;
 #[derive(Debug, Clone, Copy)]
 pub enum FeatureType {
     Face,
+    Faces,
     Hand,
     Hands,
     Pose,
+    Poses,
 }
 
 impl FeatureType {
     fn num_landmarks(&self) -> usize {
         match self {
             FeatureType::Face => 478,
+            FeatureType::Faces => 478,
             FeatureType::Hand => 21,
             FeatureType::Hands => 42,
             FeatureType::Pose => 33,
+            FeatureType::Poses => 33,
         }
     }
 }
@@ -50,9 +54,11 @@ impl Into<mFeatureType> for FeatureType {
     fn into(self) -> mFeatureType {
         match self {
             FeatureType::Face => mediagraph_FeatureType_FACE,
-            FeatureType::Hand => mediagraph_FeatureType_HANDS,
+            FeatureType::Faces => mediagraph_FeatureType_FACES,
+            FeatureType::Hand => mediagraph_FeatureType_HAND,
             FeatureType::Hands => mediagraph_FeatureType_HANDS,
             FeatureType::Pose => mediagraph_FeatureType_POSE,
+            FeatureType::Poses => mediagraph_FeatureType_POSES,
         }
     }
 }
