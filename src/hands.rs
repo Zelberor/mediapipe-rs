@@ -1,6 +1,8 @@
 //! Hand detection utilities.
 use super::*;
 
+pub const NUM_HAND_LANDMARKS: usize = 21;
+
 /// Hand landmark indices.
 pub enum HandLandmark {
     WRIST = 0,
@@ -44,9 +46,17 @@ impl HandDetector {
     }
 
     /// Processes the input frame, returns a list of hands
-    pub fn process(&mut self, input: &Mat) -> Vec<Vec<Landmark>> {
+    pub fn process(&mut self, input: &Mat) -> Vec<Hand> {
         let result = self.graph.process(input);
-        result[0].clone()
+        let mut hands = vec![];
+
+        for hand_landmarks in result[0].iter() {
+            let mut hand = Hand::default();
+            hand.data.copy_from_slice(&hand_landmarks[..]);
+            hands.push(hand);
+        }
+
+        hands
     }
 }
 

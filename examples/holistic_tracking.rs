@@ -31,12 +31,11 @@ fn face_mesh() -> Result<()> {
 
             println!("processing");
             let result = detector.process(&flip_frame);
-            println!("received {} types of landmarks", result.len());
 
             highgui::imshow(window, &mut flip_frame)?;
 
-            if !result[0].is_empty() {
-                let landmark = result[0][0][0];
+            if let Some(pose) = result.pose {
+                let landmark = pose.data[0];
                 println!("LANDMARK: {} {} {}", landmark.x, landmark.y, landmark.z);
             }
         } else {

@@ -35,7 +35,7 @@ fn face_mesh() -> Result<()> {
             highgui::imshow(window, &mut flip_frame)?;
 
             if !result.is_empty() {
-                let landmark = result[0][0];
+                let landmark = result[0].data[0];
                 println!("LANDMARK: {} {} {}", landmark.x, landmark.y, landmark.z);
             }
         } else {

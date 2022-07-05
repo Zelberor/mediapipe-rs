@@ -2,7 +2,7 @@ use mediapipe::*;
 use opencv::prelude::*;
 use opencv::{highgui, imgproc, videoio, Result};
 
-pub fn hand_tracking() -> Result<()> {
+fn face_mesh() -> Result<()> {
     let window = "video capture";
 
     highgui::named_window(window, highgui::WINDOW_AUTOSIZE)?;
@@ -16,7 +16,7 @@ pub fn hand_tracking() -> Result<()> {
     cap.set(videoio::CAP_PROP_FRAME_HEIGHT, 480.0)?;
     cap.set(videoio::CAP_PROP_FPS, 30.0)?;
 
-    let mut detector = hands::HandDetector::default();
+    let mut detector = holistic::MultiPersonHolisticDetector::default();
 
     let mut raw_frame = Mat::default();
     let mut rgb_frame = Mat::default();
@@ -35,8 +35,10 @@ pub fn hand_tracking() -> Result<()> {
             highgui::imshow(window, &mut flip_frame)?;
 
             if !result.is_empty() {
-                let landmark = result[0].data[0];
-                println!("LANDMARK: {} {} {}", landmark.x, landmark.y, landmark.z);
+                if let Some(pose) = &result[0].pose {
+                    let landmark = pose.data[0];
+                    println!("LANDMARK: {} {} {}", landmark.x, landmark.y, landmark.z);
+                }
             }
         } else {
             println!("WARN: Skip empty frame");
@@ -51,5 +53,5 @@ pub fn hand_tracking() -> Result<()> {
 }
 
 fn main() {
-    hand_tracking().unwrap()
+    face_mesh().unwrap()
 }

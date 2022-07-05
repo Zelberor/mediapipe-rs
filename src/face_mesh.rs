@@ -10,7 +10,7 @@ impl FaceMeshDetector {
         let graph = Detector::new(
             include_str!("graphs/face_mesh_desktop_live.pbtxt"),
             vec![Output {
-                type_: FeatureType::Face,
+                type_: FeatureType::Faces,
                 name: "multi_face_landmarks".into(),
             }],
         );
@@ -19,9 +19,17 @@ impl FaceMeshDetector {
     }
 
     /// Processes the input frame, returns a face mesh if detected.
-    pub fn process(&mut self, input: &Mat) -> Vec<Vec<Landmark>> {
+    pub fn process(&mut self, input: &Mat) -> Vec<FaceMesh> {
         let landmarks = self.graph.process(input);
-        landmarks[0].clone()
+        let mut faces = vec![];
+
+        for face_landmarks in landmarks[0].iter() {
+            let mut face = FaceMesh::default();
+            face.data.copy_from_slice(&face_landmarks[..]);
+            faces.push(face);
+        }
+
+        faces
     }
 }
 

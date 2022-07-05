@@ -1,6 +1,8 @@
 //! Pose detection utilities.
 use super::*;
 
+pub const NUM_POSE_LANDMARKS: usize = 33;
+
 /// Pose landmark indices.
 pub enum PoseLandmark {
     NOSE = 0,
@@ -72,6 +74,44 @@ impl PoseDetector {
 }
 
 impl Default for PoseDetector {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+pub struct MultiPoseDetector {
+    graph: Detector,
+}
+
+impl MultiPoseDetector {
+    pub fn new() -> Self {
+        let graph = Detector::new(
+            include_str!("graphs/multi_person_pose_tracking_cpu.pbtxt"),
+            vec![Output {
+                type_: FeatureType::Poses,
+                name: "multi_pose_landmarks".into(),
+            }],
+        );
+
+        Self { graph }
+    }
+
+    /// Processes the input frame, returns poses if detected.
+    pub fn process(&mut self, input: &Mat) -> Vec<Pose> {
+        let result = self.graph.process(input);
+        let mut poses = vec![];
+
+        for pose_landmarks in result[0].iter() {
+            let mut pose = Pose::default();
+            pose.data.copy_from_slice(&pose_landmarks[..]);
+            poses.push(pose);
+        }
+
+        poses
+    }
+}
+
+impl Default for MultiPoseDetector {
     fn default() -> Self {
         Self::new()
     }

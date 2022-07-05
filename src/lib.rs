@@ -43,7 +43,7 @@ impl FeatureType {
             FeatureType::Face => 478,
             FeatureType::Faces => 478,
             FeatureType::Hand => 21,
-            FeatureType::Hands => 42,
+            FeatureType::Hands => 21,
             FeatureType::Pose => 33,
             FeatureType::Poses => 33,
         }
@@ -100,6 +100,7 @@ impl Default for Landmark {
 
 /// Represents a detected pose, as 33 landmarks.
 /// Landmark names are in [pose::PoseLandmark].
+#[derive(Clone, Debug)]
 pub struct Pose {
     pub data: [Landmark; 33],
 }
@@ -114,12 +115,13 @@ impl Default for Pose {
 
 /// Represents a detected hand, as 21 landmarks.
 /// Landmark names are in [hands::HandLandmark]
-#[derive(Default)]
+#[derive(Clone, Debug, Default)]
 pub struct Hand {
     pub data: [Landmark; 21],
 }
 
 /// Represents a detected face mesh, as 478 landmarks.
+#[derive(Clone, Debug)]
 pub struct FaceMesh {
     pub data: [Landmark; 478],
 }
