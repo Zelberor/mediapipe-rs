@@ -45,9 +45,9 @@ bazel build --define MEDIAPIPE_DISABLE_GPU=1 mediapipe:mediagraph
 cp bazel-bin/mediapipe/libmediagraph.so /usr/local/lib/libmediagraph.so
 ```
 
-### linking & building
+### linking
 
-Navigate to the project directory and create a symbolic link to the `../mediapipe/mediapipe`.
+Navigate to the project directory and create a symbolic link to `../mediapipe/mediapipe`.
 
 ```shell
 cd ../mediapipe-rs # or the path to your project
@@ -62,7 +62,7 @@ Add the following to your dependencies list in `Cargo.toml`:
 mediapipe = { git = "https://github.com/julesyoungberg/mediapipe-rs" }
 ```
 
-Mediapipe relies on tflite files which must be available at `./mediapipe/modules/`. The easiest way to satisfy this is by creating a symbolic link to mediapipe as explained in the `linking & building` section above.
+Mediapipe relies on tflite files which must be available at `./mediapipe/modules/`. The easiest way to satisfy this is by creating a symbolic link to mediapipe as explained in the `linking` section above.
 
 ## examples
 
