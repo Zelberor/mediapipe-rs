@@ -1,3 +1,10 @@
+profiler_config {
+  trace_enabled: true
+  # enable_profiler: true
+  trace_log_interval_count: 200
+  trace_log_path: "/Users/jules/workspace/mediapipe-rs/logs/"
+}
+
 # MediaPipe graph that performs pose tracking with TensorFlow Lite on CPU.
 
 # CPU buffer. (ImageFrame)
@@ -6,17 +13,19 @@ input_stream: "input_video"
 # Output image with rendered results. (ImageFrame)
 output_stream: "multi_pose_landmarks"
 
-output_stream: "pose_detections"
+# output_stream: "pose_detections"
 
 output_stream: "roi_from_landmarks"
 
 # Generates side packet to enable segmentation.
 node {
   calculator: "ConstantSidePacketCalculator"
-  output_side_packet: "PACKET:enable_segmentation"
+  output_side_packet: "PACKET:0:enable_segmentation"
+  output_side_packet: "PACKET:1:num_poses"
   node_options: {
     [type.googleapis.com/mediapipe.ConstantSidePacketCalculatorOptions]: {
-      packet { bool_value: true }
+      packet { bool_value: false }
+      packet { int_value: 2 }
     }
   }
 }
@@ -34,7 +43,7 @@ node {
 node {
   calculator: "FlowLimiterCalculator"
   input_stream: "input_video"
-  input_stream: "FINISHED:output_video"
+  input_stream: "FINISHED:roi_from_landmarks"
   input_stream_info: {
     tag_index: "FINISHED"
     back_edge: true
@@ -47,7 +56,8 @@ node {
   calculator: "MultiPoseLandmarkCpu"
   input_side_packet: "ENABLE_SEGMENTATION:enable_segmentation"
   input_stream: "IMAGE:throttled_input_video"
+  input_side_packet: "NUM_POSES:num_poses"
   output_stream: "LANDMARKS:multi_pose_landmarks"
-  output_stream: "DETECTION:pose_detections"
+  # output_stream: "DETECTION:pose_detections"
   output_stream: "ROI_FROM_LANDMARKS:roi_from_landmarks"
 }

@@ -10,3 +10,5 @@ Cargo.lock
 **/*.rs.bk
 /refs/
 /mediapipe/
+/logs/
+.DS_Store

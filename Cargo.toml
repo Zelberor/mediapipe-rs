@@ -12,10 +12,10 @@ edition = "2018"
 name = "mediapipe"
 
 [dependencies]
-cgmath = "0.18.0"
-libc = "0.2.0"
-opencv = { version = "0.63", features = ["clang-runtime"] }
-protobuf = "2.23.0"
+cgmath = "0.18"
+libc = "0.2"
+opencv = "0.66"
+protobuf = "2.23"
 
 [build-dependencies]
 bindgen = "*"

@@ -10,7 +10,7 @@ fn main() {
         .clang_arg("-std=c++14")
         .clang_arg("-I/usr/local/include/opencv4")
         .generate_comments(true)
-        .header("/usr/local/include/mediagraph.h")
+        .header("./mediapipe/mediagraph.h")
         .allowlist_function("mediagraph.*")
         .allowlist_type("mediagraph.*")
         .allowlist_var("mediagraph.*")
