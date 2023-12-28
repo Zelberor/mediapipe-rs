@@ -1,0 +1,4 @@
+
+[submodule "mediapipe"]
+	path = mediapipe
+	url = git@github.com:Zelberor/mediapipe.git
