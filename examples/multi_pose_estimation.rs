@@ -30,7 +30,7 @@ pub fn pose_estimation() -> Result<()> {
             opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
             println!("processing");
-            let result = detector.process(&rgb_frame);
+            let result = detector.process(&mut rgb_frame);
 
             highgui::imshow(window, &mut rgb_frame)?;
 

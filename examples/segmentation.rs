@@ -30,7 +30,7 @@ fn segmentation() -> Result<()> {
             opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
             println!("processing");
-            let mut result = detector.process(&flip_frame);
+            let mut result = detector.process(&mut flip_frame);
             println!("processed");
             highgui::imshow(window, &mut result)?;
         } else {

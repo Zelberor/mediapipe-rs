@@ -40,7 +40,7 @@ impl HolisticDetector {
     }
 
     /// Processes the input frame, returns landmarks if detected
-    pub fn process(&mut self, input: &Mat) -> HolisticDetection {
+    pub fn process(&mut self, input: &mut Mat) -> HolisticDetection {
         let landmarks = self.graph.process(input);
 
         let mut pose = None;
@@ -72,12 +72,7 @@ impl HolisticDetector {
             right_hand = Some(r);
         }
 
-        HolisticDetection {
-            pose,
-            face,
-            left_hand,
-            right_hand,
-        }
+        HolisticDetection { pose, face, left_hand, right_hand }
     }
 }
 
@@ -112,23 +107,16 @@ impl MultiPersonHolisticDetector {
             },
         ];
 
-        let graph = Detector::new(
-            include_str!("graphs/multi_person_holistic_tracking_cpu.pbtxt"),
-            outputs,
-        );
+        let graph = Detector::new(include_str!("graphs/multi_person_holistic_tracking_cpu.pbtxt"), outputs);
 
         Self { graph }
     }
 
     /// Processes the input frame, returns landmarks if detected
-    pub fn process(&mut self, input: &Mat) -> Vec<HolisticDetection> {
+    pub fn process(&mut self, input: &mut Mat) -> Vec<HolisticDetection> {
         let landmarks = self.graph.process(input);
 
-        let max_landmarks = landmarks
-            .iter()
-            .map(|l| l.len())
-            .reduce(|acc, item| acc.max(item))
-            .unwrap();
+        let max_landmarks = landmarks.iter().map(|l| l.len()).reduce(|acc, item| acc.max(item)).unwrap();
 
         let mut detections = vec![];
 
@@ -162,12 +150,7 @@ impl MultiPersonHolisticDetector {
                 right_hand = Some(r);
             }
 
-            detections.push(HolisticDetection {
-                pose,
-                face,
-                left_hand,
-                right_hand,
-            });
+            detections.push(HolisticDetection { pose, face, left_hand, right_hand });
         }
 
         detections

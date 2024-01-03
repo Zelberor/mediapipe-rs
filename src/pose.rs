@@ -58,7 +58,7 @@ impl PoseDetector {
     }
 
     /// Processes the input frame, returns a pose if detected.
-    pub fn process(&mut self, input: &Mat) -> Option<Pose> {
+    pub fn process(&mut self, input: &mut Mat) -> Option<Pose> {
         let result = self.graph.process(input);
 
         if result[0].is_empty() {
@@ -97,7 +97,7 @@ impl MultiPoseDetector {
     }
 
     /// Processes the input frame, returns poses if detected.
-    pub fn process(&mut self, input: &Mat) -> Vec<Pose> {
+    pub fn process(&mut self, input: &mut Mat) -> Vec<Pose> {
         let result = self.graph.process(input);
         let mut poses = vec![];
 

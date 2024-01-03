@@ -19,7 +19,7 @@ impl FaceMeshDetector {
     }
 
     /// Processes the input frame, returns a face mesh if detected.
-    pub fn process(&mut self, input: &Mat) -> Vec<FaceMesh> {
+    pub fn process(&mut self, input: &mut Mat) -> Vec<FaceMesh> {
         let landmarks = self.graph.process(input);
         let mut faces = vec![];
 

@@ -30,7 +30,7 @@ fn face_mesh() -> Result<()> {
             opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
             println!("processing");
-            let result = detector.process(&flip_frame);
+            let result = detector.process(&mut flip_frame);
 
             highgui::imshow(window, &mut flip_frame)?;
 

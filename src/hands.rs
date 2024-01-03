@@ -46,7 +46,7 @@ impl HandDetector {
     }
 
     /// Processes the input frame, returns a list of hands
-    pub fn process(&mut self, input: &Mat) -> Vec<Hand> {
+    pub fn process(&mut self, input: &mut Mat) -> Vec<Hand> {
         let result = self.graph.process(input);
         let mut hands = vec![];
 
@@ -63,5 +63,22 @@ impl HandDetector {
 impl Default for HandDetector {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+pub struct HandVisualizer {
+    graph: Effect,
+}
+
+impl HandVisualizer {
+    pub fn new() -> Self {
+        let graph = Effect::new(include_str!("graphs/hand_tracking_desktop_live.pbtxt"), "output_video");
+
+        Self { graph }
+    }
+
+    /// Processes the input frame, returns the output frame.
+    pub fn process(&mut self, input: &mut Mat) -> Mat {
+        self.graph.process(input)
     }
 }

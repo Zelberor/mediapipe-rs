@@ -30,15 +30,12 @@ pub fn pose_estimation() -> Result<()> {
             opencv::core::flip(&rgb_frame, &mut flip_frame, 1)?; // horizontal
 
             println!("processing");
-            let result = detector.process(&rgb_frame);
+            let result = detector.process(&mut rgb_frame);
 
             highgui::imshow(window, &mut rgb_frame)?;
 
             if let Some(pose) = result {
-                println!(
-                    "LANDMARK: {} {} {}",
-                    pose.data[0].x, pose.data[0].y, pose.data[0].z
-                );
+                println!("LANDMARK: {} {} {}", pose.data[0].x, pose.data[0].y, pose.data[0].z);
             }
         } else {
             println!("WARN: Skip empty frame");

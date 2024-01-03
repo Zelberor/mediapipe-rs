@@ -12,7 +12,7 @@
 extern "C" {}
 
 use opencv::prelude::*;
-use std::ffi::CString;
+use std::{ffi::CString, path::Path};
 
 mod bindings;
 pub mod face_mesh;
@@ -63,6 +63,15 @@ impl Into<mFeatureType> for FeatureType {
     }
 }
 
+pub fn set_resource_root_dir(path: &Path) {
+    unsafe {
+        let str = path.to_str().expect("Expected resource path to be valid UTF-8");
+        let cstr = CString::new(str).expect("Could not convert path to a c compatible string");
+
+        bindings::mediagraph_set_resource_root_dir(cstr.as_ptr());
+    }
+}
+
 /// The definition of a graph output.
 #[derive(Debug, Clone)]
 pub struct Output {
@@ -72,14 +81,9 @@ pub struct Output {
 
 impl Into<mOutput> for Output {
     fn into(self) -> mOutput {
-        let name = CString::new(self.name)
-            .expect("CString::new failed")
-            .into_raw();
+        let name = CString::new(self.name).expect("CString::new failed").into_raw();
 
-        mOutput {
-            type_: self.type_.into(),
-            name,
-        }
+        mOutput { type_: self.type_.into(), name }
     }
 }
 
@@ -107,9 +111,7 @@ pub struct Pose {
 
 impl Default for Pose {
     fn default() -> Self {
-        Self {
-            data: [Landmark::default(); 33],
-        }
+        Self { data: [Landmark::default(); 33] }
     }
 }
 
@@ -128,9 +130,7 @@ pub struct FaceMesh {
 
 impl Default for FaceMesh {
     fn default() -> Self {
-        Self {
-            data: [Landmark::default(); 478],
-        }
+        Self { data: [Landmark::default(); 478] }
     }
 }
 
@@ -143,45 +143,24 @@ pub struct Detector {
 impl Detector {
     /// Creates a new Mediagraph with the given config.
     pub fn new(graph_config: &str, output_config: Vec<Output>) -> Self {
-        assert!(
-            output_config.len() > 0,
-            "must specify at least one output feature"
-        );
+        assert!(output_config.len() > 0, "must specify at least one output feature");
         let graph_config = CString::new(graph_config).expect("CString::new failed");
 
-        let outputs = output_config
-            .iter()
-            .map(|f| f.clone().into())
-            .collect::<Vec<mOutput>>();
+        let outputs = output_config.iter().map(|f| f.clone().into()).collect::<Vec<mOutput>>();
 
-        let graph: *mut mediagraph_Detector = unsafe {
-            mediagraph_Detector::Create(
-                graph_config.as_ptr(),
-                outputs.as_ptr(),
-                outputs.len() as u8,
-            )
-        };
+        let graph: *mut mediagraph_Detector = unsafe { mediagraph_Detector::Create(graph_config.as_ptr(), outputs.as_ptr(), outputs.len() as u8) };
 
-        Self {
-            graph,
-            outputs: output_config,
-        }
+        Self { graph, outputs: output_config }
     }
 
     /// Processes the input frame, returns a slice of landmarks if any are detected.
-    pub fn process(&mut self, input: &Mat) -> Vec<Vec<Vec<Landmark>>> {
-        let mut data = input.clone();
+    pub fn process(&mut self, input: &mut Mat) -> Vec<Vec<Vec<Landmark>>> {
+        let data = input;
         let mut num_features = vec![0; self.outputs.len()];
 
         let results = unsafe {
             let nf_data = num_features.as_mut_slice();
-            mediagraph_Detector_Process(
-                self.graph as *mut std::ffi::c_void,
-                data.data_mut(),
-                data.cols(),
-                data.rows(),
-                nf_data.as_mut_ptr(),
-            )
+            mediagraph_Detector_Process(self.graph as *mut std::ffi::c_void, data.data_mut(), data.cols(), data.rows(), nf_data.as_mut_ptr())
         };
 
         let mut landmarks = vec![];
@@ -197,8 +176,7 @@ impl Detector {
             let num_landmarks = self.outputs[i].type_.num_landmarks();
 
             for _ in 0..count {
-                let l =
-                    unsafe { std::slice::from_raw_parts(results.add(data_index), num_landmarks) };
+                let l = unsafe { std::slice::from_raw_parts(results.add(data_index), num_landmarks) };
                 data_index += num_landmarks;
                 fl.push(l.to_vec());
             }
@@ -229,36 +207,20 @@ impl Effect {
         let graph_config = CString::new(graph_config).expect("CString::new failed");
         let output_node = CString::new(output_node).expect("CString::new failed");
 
-        let graph: *mut mediagraph_Effect =
-            unsafe { mediagraph_Effect::Create(graph_config.as_ptr(), output_node.as_ptr()) };
+        let graph: *mut mediagraph_Effect = unsafe { mediagraph_Effect::Create(graph_config.as_ptr(), output_node.as_ptr()) };
 
         Self { graph }
     }
 
     /// Processes the input frame, returns a slice of landmarks if any are detected.
-    pub fn process(&mut self, input: &Mat) -> Mat {
-        let mut data = input.clone();
+    pub fn process(&mut self, input: &mut Mat) -> Mat {
+        let data = input;
         let cols = data.cols();
         let rows = data.rows();
         let typ = data.typ();
-        let out_data = unsafe {
-            mediagraph_Effect_Process(
-                self.graph as *mut std::ffi::c_void,
-                data.data_mut(),
-                cols,
-                rows,
-            )
-        };
-        unsafe {
-            Mat::new_rows_cols_with_data(
-                rows,
-                cols,
-                typ,
-                out_data as *mut std::ffi::c_void,
-                opencv::core::Mat_AUTO_STEP,
-            )
-            .unwrap()
-        }
+        let out_data = unsafe { mediagraph_Effect_Process(self.graph as *mut std::ffi::c_void, data.data_mut(), cols, rows) };
+        //unsafe { Mat::new_rows_cols_with_data(rows, cols, typ, out_data as *mut std::ffi::c_void, opencv::core::Mat_AUTO_STEP).unwrap() }
+        Mat::default()
     }
 }
 
